@@ -1,0 +1,31 @@
+@use '@/styles/variables' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.backLink {
+  font-size: $font-size-sm;
+  color: $color-text-medium;
+  text-decoration: none;
+  transition: color 150ms ease;
+
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-dark;
+  margin: 0;
+}

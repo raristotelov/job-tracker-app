@@ -1,0 +1,74 @@
+@use '@/styles/variables' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  max-width: 720px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-dark;
+  margin: 0;
+}
+
+// =============================================================================
+// CREATE FORM SECTION
+// =============================================================================
+
+.createSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  padding: $spacing-lg;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+}
+
+.createTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-medium;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 $spacing-sm 0;
+}
+
+// =============================================================================
+// LIST SECTION
+// =============================================================================
+
+.listSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.listTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-medium;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.emptyMessage {
+  font-size: $font-size-base;
+  color: $color-text-medium;
+  margin: 0;
+  padding: $spacing-lg;
+  text-align: center;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+}

@@ -1,0 +1,91 @@
+@use 'sass:color';
+@use 'variables' as *;
+
+// =============================================================================
+// GLOBAL BASE STYLES
+// Applied once to the document. Component-level styles live in .module.scss.
+// =============================================================================
+
+// Root element and body
+html {
+  font-size: $font-size-base;
+}
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+  color: $color-text-dark;
+  background-color: $color-bg-page;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// =============================================================================
+// HEADINGS
+// =============================================================================
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  color: $color-text-dark;
+}
+
+h1 {
+  font-size: $font-size-2xl;
+}
+
+h2 {
+  font-size: $font-size-xl;
+}
+
+h3 {
+  font-size: $font-size-lg;
+}
+
+h4,
+h5,
+h6 {
+  font-size: $font-size-base;
+}
+
+// =============================================================================
+// LINKS
+// =============================================================================
+
+a {
+  color: $color-primary;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: color.scale($color-primary, $lightness: -20%);
+  }
+
+  &:visited {
+    color: $color-primary;
+  }
+}
+
+// =============================================================================
+// FOCUS STYLES (Accessibility)
+// Consistent, high-contrast focus ring on all interactive elements.
+// =============================================================================
+
+:focus-visible {
+  outline: 2px solid $color-primary;
+  outline-offset: 2px;
+  border-radius: $radius-sm;
+}
+
+// Remove focus ring for mouse users (browsers that support :focus-visible
+// automatically suppress :focus on click, but this is an extra guard)
+:focus:not(:focus-visible) {
+  outline: none;
+}

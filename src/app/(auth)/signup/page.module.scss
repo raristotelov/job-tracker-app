@@ -1,0 +1,63 @@
+@use '@/styles/variables' as *;
+
+// =============================================================================
+// SIGNUP PAGE
+// =============================================================================
+
+.heading {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-dark;
+  text-align: center;
+  margin: 0 0 $spacing-xl;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+// =============================================================================
+// ERROR BANNER
+// =============================================================================
+
+.errorBanner {
+  padding: $spacing-sm $spacing-md;
+  background-color: #fef2f2; // red-50
+  border: 1px solid #fecaca; // red-200
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  color: $color-danger;
+  line-height: $line-height-normal;
+}
+
+// =============================================================================
+// FOOTER LINK
+// =============================================================================
+
+.footer {
+  margin-top: $spacing-lg;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-medium;
+}
+
+.link {
+  color: $color-primary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// =============================================================================
+// SUBMIT BUTTON — full width
+// =============================================================================
+
+.submitButton {
+  width: 100%;
+  margin-top: $spacing-sm;
+}

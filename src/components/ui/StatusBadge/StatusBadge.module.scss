@@ -1,0 +1,48 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+
+// =============================================================================
+// STATUS BADGE BASE
+// =============================================================================
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px $spacing-sm;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  white-space: nowrap;
+}
+
+// =============================================================================
+// STATUS VARIANTS
+// Each variant sets text color to the status color and background to a
+// light tint (~12% opacity) of the same color.
+// =============================================================================
+
+.badge--gray {
+  color: color.scale($status-applied-color, $lightness: -15%);
+  background-color: color.change($status-applied-color, $alpha: 0.12);
+}
+
+.badge--blue {
+  color: color.scale($status-interview-scheduled-color, $lightness: -20%);
+  background-color: color.change($status-interview-scheduled-color, $alpha: 0.12);
+}
+
+.badge--purple {
+  color: color.scale($status-interview-completed-color, $lightness: -20%);
+  background-color: color.change($status-interview-completed-color, $alpha: 0.12);
+}
+
+.badge--green {
+  color: color.scale($status-offer-received-color, $lightness: -25%);
+  background-color: color.change($status-offer-received-color, $alpha: 0.12);
+}
+
+.badge--red {
+  color: color.scale($status-rejected-color, $lightness: -15%);
+  background-color: color.change($status-rejected-color, $alpha: 0.12);
+}

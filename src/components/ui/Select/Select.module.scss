@@ -1,0 +1,100 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+
+// =============================================================================
+// SELECT WRAPPER
+// =============================================================================
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+// =============================================================================
+// LABEL
+// =============================================================================
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-dark;
+  line-height: $line-height-tight;
+}
+
+// =============================================================================
+// SELECT WRAPPER (positions chevron icon)
+// =============================================================================
+
+.selectWrapper {
+  position: relative;
+  display: block;
+}
+
+// =============================================================================
+// SELECT
+// =============================================================================
+
+.select {
+  width: 100%;
+  padding: $spacing-sm $spacing-xl $spacing-sm $spacing-md;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+  color: $color-text-dark;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  appearance: none;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px color.scale($color-primary, $alpha: -80%);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: $color-bg-subtle;
+  }
+}
+
+// =============================================================================
+// CUSTOM CHEVRON ICON
+// =============================================================================
+
+.chevron {
+  position: absolute;
+  right: $spacing-md;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid $color-text-medium;
+  pointer-events: none;
+}
+
+// =============================================================================
+// ERROR STATE
+// =============================================================================
+
+.selectError {
+  border-color: $color-danger;
+
+  &:focus {
+    border-color: $color-danger;
+    box-shadow: 0 0 0 3px color.scale($color-danger, $alpha: -80%);
+  }
+}
+
+.errorMessage {
+  font-size: $font-size-sm;
+  color: $color-danger;
+  line-height: $line-height-tight;
+}

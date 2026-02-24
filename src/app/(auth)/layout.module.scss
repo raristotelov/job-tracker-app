@@ -1,0 +1,44 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+// =============================================================================
+// AUTH LAYOUT — Full-viewport centered card
+// =============================================================================
+
+.root {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  @include flex-center;
+  padding: $spacing-lg;
+}
+
+// =============================================================================
+// CARD
+// =============================================================================
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  padding: $spacing-2xl $spacing-xl;
+
+  @include respond-to('mobile') {
+    padding: $spacing-xl $spacing-lg;
+  }
+}
+
+// =============================================================================
+// TITLE
+// =============================================================================
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-dark;
+  text-align: center;
+  margin: 0 0 $spacing-xl;
+  letter-spacing: -0.025em;
+}

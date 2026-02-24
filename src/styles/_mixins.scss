@@ -1,0 +1,77 @@
+@use 'variables' as *;
+
+// =============================================================================
+// RESPOND-TO — Media query helper
+//
+// Usage:
+//   @include respond-to('tablet') { ... }
+//
+// Supported breakpoint keys: mobile, tablet, desktop, wide
+// =============================================================================
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == 'mobile' {
+    @media (max-width: #{$breakpoint-mobile}) {
+      @content;
+    }
+  } @else if $breakpoint == 'tablet' {
+    @media (max-width: #{$breakpoint-tablet}) {
+      @content;
+    }
+  } @else if $breakpoint == 'desktop' {
+    @media (max-width: #{$breakpoint-desktop}) {
+      @content;
+    }
+  } @else if $breakpoint == 'wide' {
+    @media (max-width: #{$breakpoint-wide}) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoint: `#{$breakpoint}`. Valid values are: mobile, tablet, desktop, wide.";
+  }
+}
+
+// =============================================================================
+// FLEX-CENTER — Horizontally and vertically center content with flexbox
+//
+// Usage:
+//   @include flex-center;
+// =============================================================================
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// =============================================================================
+// TRUNCATE-TEXT — Single-line overflow ellipsis
+//
+// Usage:
+//   @include truncate-text;
+// =============================================================================
+
+@mixin truncate-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// =============================================================================
+// VISUALLY-HIDDEN — Hide visually but keep accessible to screen readers
+//
+// Usage:
+//   @include visually-hidden;
+// =============================================================================
+
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

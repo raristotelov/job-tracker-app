@@ -1,0 +1,88 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  background-color: $color-bg-surface;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.th {
+  padding: $spacing-sm $spacing-md;
+  text-align: left;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-medium;
+  background-color: $color-bg-subtle;
+  border-bottom: 1px solid $color-border;
+  white-space: nowrap;
+
+  // Column widths
+  &:nth-child(1) { width: 14%; }  // Section
+  &:nth-child(2) { width: 22%; }  // Company
+  &:nth-child(3) { width: 24%; }  // Position
+  &:nth-child(4) { width: 16%; }  // Location
+  &:nth-child(5) { width: 14%; }  // Status
+  &:nth-child(6) { width: 10%; }  // Date Applied
+}
+
+.row {
+  border-bottom: 1px solid $color-border;
+  transition: background-color 120ms ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: $color-bg-subtle;
+  }
+}
+
+.td {
+  padding: 0;
+  vertical-align: middle;
+}
+
+// Make the entire cell a clickable link area
+.rowLink {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  min-height: $tap-target-min;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+}
+
+.cellText {
+  @include truncate-text;
+  font-size: $font-size-sm;
+  color: $color-text-dark;
+}
+
+.muted {
+  color: $color-text-medium;
+}
+
+.placeholder {
+  color: $color-text-light;
+}
+
+@include respond-to('tablet') {
+  .th,
+  .td {
+    &:nth-child(1),  // Section
+    &:nth-child(4) { // Location
+      display: none;
+    }
+  }
+}

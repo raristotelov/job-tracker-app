@@ -1,0 +1,34 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+// Row: input grows, button stays its natural width.
+.inputRow {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-md;
+
+  // The Input component wrapper takes all remaining space.
+  > :first-child {
+    flex: 1;
+  }
+
+  @include respond-to('mobile') {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+// Ensure the Create button aligns with the bottom of the input on desktop.
+.createButton {
+  flex-shrink: 0;
+  // Offset by the label height so the button sits level with the input field.
+  // The Input component renders label + input, so we push down by label line-height + gap.
+  margin-bottom: 0;
+  align-self: flex-end;
+}

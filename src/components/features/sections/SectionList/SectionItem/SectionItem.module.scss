@@ -1,0 +1,160 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+// =============================================================================
+// ITEM SHELL
+// =============================================================================
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  list-style: none;
+}
+
+// =============================================================================
+// VIEW MODE
+// =============================================================================
+
+.viewRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+
+  @include respond-to('mobile') {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.nameWrapper {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  min-width: 0;
+}
+
+.name {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-text-dark;
+  @include truncate-text;
+}
+
+.count {
+  font-size: $font-size-sm;
+  color: $color-text-medium;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.viewActions {
+  display: flex;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+}
+
+// =============================================================================
+// RENAME MODE
+// =============================================================================
+
+.renameRow {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+
+  @include respond-to('mobile') {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.renameInputWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  min-width: 0;
+}
+
+.renameInput {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  font-family: inherit;
+  color: $color-text-dark;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px color.mix($color-primary, transparent, 20%);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.renameInputError {
+  border-color: $color-danger;
+
+  &:focus {
+    border-color: $color-danger;
+    box-shadow: 0 0 0 3px color.mix($color-danger, transparent, 20%);
+  }
+}
+
+.fieldError {
+  font-size: $font-size-sm;
+  color: $color-danger;
+  line-height: $line-height-normal;
+}
+
+.renameActions {
+  display: flex;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+  padding-top: 2px; // Visually align with the input field height
+}
+
+// =============================================================================
+// DELETE CONFIRMATION
+// =============================================================================
+
+.deleteConfirm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background-color: color.mix($color-danger, $color-bg-surface, 6%);
+  border: 1px solid color.mix($color-danger, $color-border, 30%);
+  border-radius: $radius-md;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.deleteMessage {
+  font-size: $font-size-sm;
+  color: $color-text-dark;
+  margin: 0;
+  line-height: $line-height-normal;
+}
+
+.deleteActions {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+}

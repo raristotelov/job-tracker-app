@@ -1,0 +1,25 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background-color: color.mix($color-danger, $color-bg-surface, 8%);
+  border: 1px solid color.mix($color-danger, $color-border, 30%);
+  border-radius: $radius-md;
+}
+
+.message {
+  font-size: $font-size-sm;
+  color: $color-text-dark;
+  margin: 0;
+  line-height: $line-height-normal;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+}

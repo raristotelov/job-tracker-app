@@ -1,0 +1,78 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  max-width: 720px;
+}
+
+// =============================================================================
+// FIELDSET
+// =============================================================================
+
+.fieldset {
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.legend {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-medium;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 $spacing-xs;
+}
+
+// =============================================================================
+// FIELD ROWS
+// =============================================================================
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.rowTwo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @include respond-to('tablet') {
+    grid-template-columns: 1fr;
+  }
+}
+
+// =============================================================================
+// ACTIONS
+// =============================================================================
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-md;
+}
+
+.cancelLink {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-text-medium;
+  text-decoration: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-md;
+  transition: color 150ms ease, background-color 150ms ease;
+
+  &:hover {
+    color: $color-text-dark;
+    background-color: $color-bg-subtle;
+  }
+}

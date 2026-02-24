@@ -1,0 +1,138 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+// =============================================================================
+// BUTTON BASE
+// =============================================================================
+
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  font-family: $font-family-base;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  border: 1px solid transparent;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, opacity 150ms ease;
+  white-space: nowrap;
+  text-decoration: none;
+
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+}
+
+// =============================================================================
+// VARIANTS
+// =============================================================================
+
+.variantPrimary {
+  background-color: $color-primary;
+  border-color: $color-primary;
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background-color: color.scale($color-primary, $lightness: -15%);
+    border-color: color.scale($color-primary, $lightness: -15%);
+  }
+
+  &:active:not(:disabled) {
+    background-color: color.scale($color-primary, $lightness: -25%);
+    border-color: color.scale($color-primary, $lightness: -25%);
+  }
+}
+
+.variantSecondary {
+  background-color: $color-bg-surface;
+  border-color: $color-border;
+  color: $color-text-dark;
+
+  &:hover:not(:disabled) {
+    background-color: $color-bg-subtle;
+  }
+
+  &:active:not(:disabled) {
+    background-color: color.scale($color-bg-subtle, $lightness: -5%);
+  }
+}
+
+.variantDestructive {
+  background-color: $color-danger;
+  border-color: $color-danger;
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background-color: color.scale($color-danger, $lightness: -15%);
+    border-color: color.scale($color-danger, $lightness: -15%);
+  }
+
+  &:active:not(:disabled) {
+    background-color: color.scale($color-danger, $lightness: -25%);
+    border-color: color.scale($color-danger, $lightness: -25%);
+  }
+}
+
+// =============================================================================
+// SIZES
+// =============================================================================
+
+.sizeSm {
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-sm;
+  border-radius: $radius-sm;
+}
+
+.sizeMd {
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+}
+
+.sizeLg {
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-lg;
+}
+
+// =============================================================================
+// LOADING STATE
+// =============================================================================
+
+.loading {
+  // Maintain button dimensions while showing spinner
+  cursor: not-allowed;
+}
+
+.spinnerWrapper {
+  position: absolute;
+  @include flex-center;
+  inset: 0;
+}
+
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: $radius-full;
+  animation: spin 0.6s linear infinite;
+}
+
+.hiddenText {
+  visibility: hidden;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

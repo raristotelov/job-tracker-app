@@ -1,0 +1,38 @@
+@use '@/styles/variables' as *;
+
+.toggle {
+  display: inline-flex;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.option {
+  padding: $spacing-xs $spacing-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  font-family: $font-family-base;
+  background-color: $color-bg-surface;
+  color: $color-text-medium;
+  border: none;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+
+  &:hover:not(.active) {
+    background-color: $color-bg-subtle;
+    color: $color-text-dark;
+  }
+
+  & + & {
+    border-left: 1px solid $color-border;
+  }
+}
+
+.active {
+  background-color: $color-primary;
+  color: $color-bg-surface;
+
+  &:hover {
+    background-color: $color-primary;
+  }
+}

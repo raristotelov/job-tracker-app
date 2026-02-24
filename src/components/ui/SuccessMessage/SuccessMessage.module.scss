@@ -1,0 +1,48 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+
+// =============================================================================
+// SUCCESS MESSAGE
+// =============================================================================
+
+.banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background-color: color.change($color-success, $alpha: 0.1);
+  border: 1px solid color.change($color-success, $alpha: 0.3);
+  border-radius: $radius-md;
+  color: color.scale($color-success, $lightness: -10%);
+}
+
+.message {
+  margin: 0;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-normal;
+  flex: 1;
+}
+
+.dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  color: inherit;
+  font-size: $font-size-lg;
+  line-height: 1;
+  transition: background-color 150ms ease;
+
+  &:hover {
+    background-color: color.change($color-success, $alpha: 0.15);
+  }
+}

@@ -1,0 +1,7 @@
+// Global styles for the Job Tracker App.
+// Partials are loaded in dependency order: reset first, then variables
+// (forwards tokens for component use), then global base styles.
+
+@use '../styles/reset';
+@use '../styles/variables';
+@use '../styles/globals';

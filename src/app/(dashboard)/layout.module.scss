@@ -1,0 +1,211 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+// =============================================================================
+// DASHBOARD LAYOUT — Sidebar + main content shell
+// =============================================================================
+
+.root {
+  display: flex;
+  min-height: 100vh;
+  background-color: $color-bg-page;
+}
+
+// =============================================================================
+// SIDEBAR
+// =============================================================================
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  flex-shrink: 0;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  background-color: $color-bg-surface;
+  border-right: 1px solid $color-border;
+  overflow-y: auto;
+}
+
+.sidebarHeader {
+  padding: $spacing-lg $spacing-lg $spacing-md;
+  border-bottom: 1px solid $color-border;
+}
+
+.appTitleLink {
+  display: block;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  text-decoration: none;
+  line-height: $line-height-tight;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+// =============================================================================
+// NAVIGATION
+// =============================================================================
+
+.nav {
+  flex: 1;
+  padding: $spacing-md 0;
+}
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navItem {
+  margin: 0;
+}
+
+.navLink {
+  display: block;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-text-medium;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: $color-bg-subtle;
+    color: $color-text-dark;
+  }
+}
+
+.navLinkActive {
+  background-color: color-mix(in srgb, $color-primary 10%, transparent);
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+  border-right: 2px solid $color-primary;
+
+  &:hover {
+    background-color: color-mix(in srgb, $color-primary 15%, transparent);
+    color: $color-primary;
+  }
+}
+
+// =============================================================================
+// SIDEBAR FOOTER — user info + logout
+// =============================================================================
+
+.sidebarFooter {
+  padding: $spacing-md $spacing-lg;
+  border-top: 1px solid $color-border;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.userEmail {
+  font-size: $font-size-sm;
+  color: $color-text-medium;
+  @include truncate-text;
+}
+
+.logoutButton {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-medium;
+  background: none;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background-color: $color-bg-subtle;
+    color: $color-danger;
+    border-color: $color-danger;
+  }
+}
+
+// =============================================================================
+// MAIN CONTENT
+// =============================================================================
+
+.main {
+  flex: 1;
+  padding: $spacing-xl;
+  overflow-y: auto;
+  min-width: 0; // prevent flex blowout on narrow content
+}
+
+// =============================================================================
+// RESPONSIVE — Mobile: top nav bar instead of sidebar
+// =============================================================================
+
+@include respond-to('tablet') {
+  .root {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    border-right: none;
+    border-bottom: 1px solid $color-border;
+    overflow-y: visible;
+    overflow-x: auto;
+  }
+
+  .sidebarHeader {
+    padding: $spacing-sm $spacing-md;
+    border-bottom: none;
+    border-right: 1px solid $color-border;
+    flex-shrink: 0;
+  }
+
+  .nav {
+    flex: 1;
+    padding: 0;
+    overflow-x: auto;
+  }
+
+  .navList {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .navLink {
+    padding: $spacing-md $spacing-md;
+    white-space: nowrap;
+  }
+
+  .navLinkActive {
+    border-right: none;
+    border-bottom: 2px solid $color-primary;
+  }
+
+  .sidebarFooter {
+    flex-direction: row;
+    align-items: center;
+    border-top: none;
+    border-left: 1px solid $color-border;
+    padding: $spacing-sm $spacing-md;
+    gap: $spacing-sm;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .userEmail {
+    max-width: 160px;
+  }
+
+  .main {
+    padding: $spacing-lg $spacing-md;
+  }
+}
