@@ -1,48 +1,138 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState, useRef } from 'react';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { ROUTES } from '@/constants/routes';
-import type { ApplicationWithSection } from '@/types';
+import { ApplicationDrawer } from '@/components/features/applications/ApplicationDrawer';
+import { ApplicationDetailModal } from '@/components/features/applications/ApplicationDetailModal';
+import { deleteApplication } from '@/services/applications';
+import type { ApplicationWithSection, Section } from '@/types';
 import { ViewToggle, type ViewMode } from './ViewToggle';
 import { ApplicationTable } from './ApplicationTable';
 import styles from './ApplicationList.module.scss';
 
 interface ApplicationListProps {
   applications: ApplicationWithSection[];
+  sections: Section[];
 }
 
 /**
  * Client Component that manages view mode state (All vs. By Section) and
  * renders the application list accordingly.
  *
- * Receives all applications as a prop from the Server Component page.
+ * Receives applications and sections as props from the Server Component page.
  * Grouping into sections is computed client-side from the fetched array.
+ * The inline creation/editing drawer is managed here — sections are passed
+ * through to avoid a redundant client-side fetch.
  */
-export function ApplicationList({ applications }: ApplicationListProps) {
+export function ApplicationList({ applications, sections }: ApplicationListProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('all');
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<ApplicationWithSection | null>(null);
+  const [selectedApplication, setSelectedApplication] = useState<ApplicationWithSection | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+
+  // Ref to the "Add Application" button for focus restoration after create.
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  // Ref to the row's "Edit" button for focus restoration after edit.
+  const editTriggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const openDrawer = () => setIsDrawerOpen(true);
+
+  const openEditDrawer = (app: ApplicationWithSection, buttonEl: HTMLButtonElement) => {
+    editTriggerRef.current = buttonEl;
+    setEditTarget(app);
+    setIsDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setIsDrawerOpen(false);
+    if (editTarget !== null) {
+      // Restore focus to the row's Edit button.
+      editTriggerRef.current?.focus();
+    } else {
+      // Restore focus to the Add Application button.
+      triggerRef.current?.focus();
+    }
+    // Clear edit target after restoring focus so the next open defaults to create.
+    setEditTarget(null);
+  };
+
+  const openDetail = (app: ApplicationWithSection) => {
+    setSelectedApplication(app);
+    setIsDetailOpen(true);
+  };
+
+  const closeDetail = () => {
+    setIsDetailOpen(false);
+    // Keep selectedApplication set until the close animation completes (300ms)
+    // so the popup content doesn't disappear before the fade-out finishes.
+    setTimeout(() => setSelectedApplication(null), 300);
+  };
+
+  const handleDelete = async (app: ApplicationWithSection) => {
+    const confirmed = window.confirm(
+      `Delete "${app.position_title}" at ${app.company_name}? This cannot be undone.`,
+    );
+    if (!confirmed) return;
+
+    const result = await deleteApplication(app.id);
+    if ('error' in result) {
+      alert(result.error);
+    }
+    // On success, revalidatePath in the server action triggers a re-render automatically.
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.toolbar}>
         <ViewToggle value={viewMode} onChange={setViewMode} />
-        <Link href={ROUTES.APPLICATION_NEW} className={styles.addButton}>
+        <button
+          ref={triggerRef}
+          type="button"
+          className={styles.addButton}
+          onClick={openDrawer}
+          disabled={isDrawerOpen}
+        >
           Add Application
-        </Link>
+        </button>
       </div>
 
       {applications.length === 0 ? (
         <EmptyState
           message="No applications yet. Add your first one to get started."
           actionLabel="Add Application"
-          actionHref={ROUTES.APPLICATION_NEW}
+          onAction={openDrawer}
         />
       ) : viewMode === 'all' ? (
-        <ApplicationTable applications={applications} />
+        <ApplicationTable
+          applications={applications}
+          sections={sections}
+          onEditClick={openEditDrawer}
+          onDeleteClick={handleDelete}
+          onRowClick={openDetail}
+        />
       ) : (
-        <BySectionView applications={applications} />
+        <BySectionView
+          applications={applications}
+          sections={sections}
+          onEditClick={openEditDrawer}
+          onDeleteClick={handleDelete}
+          onRowClick={openDetail}
+        />
       )}
+
+      <ApplicationDrawer
+        isOpen={isDrawerOpen}
+        onClose={closeDrawer}
+        sections={sections}
+        editTarget={editTarget ?? undefined}
+      />
+
+      <ApplicationDetailModal
+        application={selectedApplication}
+        isOpen={isDetailOpen}
+        onClose={closeDetail}
+      />
     </div>
   );
 }
@@ -53,6 +143,10 @@ export function ApplicationList({ applications }: ApplicationListProps) {
 
 interface BySectionViewProps {
   applications: ApplicationWithSection[];
+  sections: Section[];
+  onEditClick: (application: ApplicationWithSection, buttonEl: HTMLButtonElement) => void;
+  onDeleteClick: (application: ApplicationWithSection) => void;
+  onRowClick: (application: ApplicationWithSection) => void;
 }
 
 /**
@@ -60,7 +154,7 @@ interface BySectionViewProps {
  * Applications with no section appear under "Unsectioned" at the bottom.
  * Empty sections (no applications) are not rendered.
  */
-function BySectionView({ applications }: BySectionViewProps) {
+function BySectionView({ applications, sections, onEditClick, onDeleteClick, onRowClick }: BySectionViewProps) {
   // Build a map of section name -> applications.
   // The original date_applied desc ordering from the server query is preserved within each group.
   const groups = new Map<string, ApplicationWithSection[]>();
@@ -92,7 +186,13 @@ function BySectionView({ applications }: BySectionViewProps) {
             {name}
             <span className={styles.sectionCount}>{apps.length}</span>
           </h2>
-          <ApplicationTable applications={apps} />
+          <ApplicationTable
+            applications={apps}
+            sections={sections}
+            onEditClick={onEditClick}
+            onDeleteClick={onDeleteClick}
+            onRowClick={onRowClick}
+          />
         </section>
       ))}
     </div>

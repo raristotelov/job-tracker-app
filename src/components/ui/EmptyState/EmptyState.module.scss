@@ -23,6 +23,7 @@
 }
 
 .action {
+  // Shared between <Link> and <button> usages.
   display: inline-flex;
   align-items: center;
   padding: $spacing-sm $spacing-md;
@@ -30,8 +31,11 @@
   color: #ffffff;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
+  font-family: $font-family-base;
+  border: none;
   border-radius: $radius-md;
   text-decoration: none;
+  cursor: pointer;
   transition: background-color 150ms ease;
 
   &:hover {

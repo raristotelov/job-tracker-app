@@ -1,7 +1,6 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import {
@@ -18,18 +17,18 @@ export interface ApplicationActionError {
 }
 
 /**
- * Creates a new job application for the authenticated user.
+ * Creates a new job application for the authenticated user — inline variant.
  *
- * Validates the form data with the Zod schema, inserts the record into
- * Supabase (user_id is set server-side from the session), revalidates the
- * applications list, and redirects to the new record's detail page.
+ * Uses the same validation and insert logic as `createApplication` but
+ * returns `{ id: string }` on success instead of calling `redirect()`.
+ * This makes it safe to use inside `useActionState` where a return value
+ * is expected by the Client Component (e.g. in the side drawer form).
  *
- * Returns `{ error, fieldErrors? }` on validation or DB failure so the form
- * can surface the messages without a page reload.
+ * Returns `ApplicationActionError` on validation or DB failure.
  */
-export async function createApplication(
+export async function createApplicationInline(
   formData: FormData,
-): Promise<ApplicationActionError | never> {
+): Promise<{ id: string } | ApplicationActionError> {
   const supabase = await createClient();
 
   const {
@@ -58,22 +57,25 @@ export async function createApplication(
   }
 
   revalidatePath(ROUTES.APPLICATIONS);
-  redirect(ROUTES.APPLICATION_DETAIL(data.id));
+  return { id: data.id };
 }
 
 /**
- * Updates an existing job application owned by the authenticated user.
+ * Updates an existing job application owned by the authenticated user — inline variant.
  *
- * Validates the form data with the Zod schema, updates the matching record in
- * Supabase (the RLS policy ensures only the owner can update it), revalidates
- * the affected pages, and redirects to the detail page.
+ * Uses the same validation and update logic as `updateApplication` but returns
+ * `{ id: string }` on success instead of calling `redirect()`. This makes it
+ * safe to use inside `useActionState` in the side drawer form.
  *
- * Returns `{ error, fieldErrors? }` on validation or DB failure.
+ * Does not revalidate the detail or edit page routes — the drawer user has no
+ * need for those caches to update.
+ *
+ * Returns `ApplicationActionError` on validation or DB failure.
  */
-export async function updateApplication(
+export async function updateApplicationInline(
   id: string,
   formData: FormData,
-): Promise<ApplicationActionError | never> {
+): Promise<{ id: string } | ApplicationActionError> {
   const supabase = await createClient();
 
   const {
@@ -101,23 +103,22 @@ export async function updateApplication(
     return { error: 'Something went wrong. Your changes were not saved. Please try again.' };
   }
 
-  revalidatePath(ROUTES.APPLICATION_DETAIL(id));
-  revalidatePath(ROUTES.APPLICATION_EDIT(id));
   revalidatePath(ROUTES.APPLICATIONS);
-  redirect(ROUTES.APPLICATION_DETAIL(id) + '?updated=1');
+  return { id };
 }
 
 /**
  * Deletes a job application owned by the authenticated user.
  *
  * The RLS policy enforces ownership — this action cannot delete another user's
- * record. After deletion, revalidates the applications list and redirects there.
+ * record. After deletion, revalidates the applications list so the table
+ * updates automatically.
  *
- * Returns `{ error }` on failure so the caller can surface the message.
+ * Returns `{ success: true }` on success, `{ error }` on failure.
  */
 export async function deleteApplication(
   id: string,
-): Promise<ApplicationActionError | never> {
+): Promise<{ success: true } | ApplicationActionError> {
   const supabase = await createClient();
 
   const {
@@ -139,7 +140,7 @@ export async function deleteApplication(
   }
 
   revalidatePath(ROUTES.APPLICATIONS);
-  redirect(ROUTES.APPLICATIONS);
+  return { success: true };
 }
 
 // =============================================================================

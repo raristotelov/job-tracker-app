@@ -1,15 +1,16 @@
 'use client';
 
 import { useActionState, useRef, useEffect } from 'react';
-import Link from 'next/link';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
 import { APPLICATION_STATUSES, STATUS_LABELS } from '@/constants/status';
 import { WORK_TYPES, WORK_TYPE_LABELS } from '@/constants/workType';
-import { ROUTES } from '@/constants/routes';
-import { createApplication, updateApplication } from '@/services/applications';
+import {
+  createApplicationInline,
+  updateApplicationInline,
+} from '@/services/applications';
 import type { ApplicationActionError } from '@/services/applications';
 import type { ApplicationWithSection, Section } from '@/types';
 import styles from './ApplicationForm.module.scss';
@@ -23,8 +24,10 @@ interface ApplicationFormProps {
   initialData?: ApplicationWithSection;
   /** Available sections for the section dropdown. */
   sections: Section[];
-  /** Route to return to when Cancel is clicked. */
-  cancelHref: string;
+  /** Called when the user clicks "Cancel". */
+  onCancel: () => void;
+  /** Called with the new application id after a successful create or edit. */
+  onSuccess?: (id: string) => void;
 }
 
 type FormState = ApplicationActionError | null;
@@ -50,27 +53,38 @@ const workTypeOptions = WORK_TYPES.map((wt) => ({
 /**
  * Shared create/edit form for job applications.
  *
- * In create mode (`initialData` is undefined): wraps `createApplication`.
- * In edit mode (`initialData` is provided): wraps `updateApplication` via a
- * bound partial action so `useActionState` always receives `(state, formData)`.
+ * In create mode (`initialData` is undefined): wraps `createApplicationInline`.
+ * In edit mode (`initialData` is provided): wraps `updateApplicationInline`.
  *
  * Client-side validation is done by the Server Action (Zod) and errors are
  * returned as `fieldErrors` in the action state. We do not duplicate
  * validation rules here — the server is the authority.
  */
-export function ApplicationForm({ initialData, sections, cancelHref }: ApplicationFormProps) {
+export function ApplicationForm({
+  initialData,
+  sections,
+  onCancel,
+  onSuccess,
+}: ApplicationFormProps) {
   const isEditMode = initialData !== undefined;
-
-  // Bind the update action to the application ID so we can use it in useActionState.
-  const action = isEditMode
-    ? updateApplication.bind(null, initialData.id)
-    : createApplication;
 
   const [state, formAction, isPending] = useActionState<FormState, FormData>(
     async (_prev, formData) => {
-      const result = await action(formData);
-      // `result` is only returned on error — on success the action redirects.
-      return result ?? null;
+      if (isEditMode) {
+        const result = await updateApplicationInline(initialData.id, formData);
+        if ('id' in result) {
+          onSuccess?.(result.id);
+          return null;
+        }
+        return result;
+      }
+
+      const result = await createApplicationInline(formData);
+      if ('id' in result) {
+        onSuccess?.(result.id);
+        return null;
+      }
+      return result;
     },
     null,
   );
@@ -224,9 +238,13 @@ export function ApplicationForm({ initialData, sections, cancelHref }: Applicati
       </fieldset>
 
       <div className={styles.actions}>
-        <Link href={cancelHref} className={styles.cancelLink}>
+        <button
+          type="button"
+          className={styles.cancelLink}
+          onClick={onCancel}
+        >
           Cancel
-        </Link>
+        </button>
         <Button type="submit" isLoading={isPending}>
           {isEditMode ? 'Save Changes' : 'Add Application'}
         </Button>

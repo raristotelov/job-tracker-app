@@ -1,1 +1,0 @@
-export { DeleteApplicationDialog } from './DeleteApplicationDialog';

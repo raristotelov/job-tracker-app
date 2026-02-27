@@ -1,1 +1,0 @@
-export { ApplicationDetail } from './ApplicationDetail';

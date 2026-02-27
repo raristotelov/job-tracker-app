@@ -1,0 +1,12 @@
+@use '@/styles/variables' as *;
+
+// =============================================================================
+// FORM WRAPPER
+// =============================================================================
+
+// The ApplicationForm's max-width: 720px is naturally overridden by the
+// narrow drawer panel (480px desktop, full-width mobile). No additional
+// width overrides are needed — the containing block is always narrower.
+.formWrapper {
+  width: 100%;
+}

@@ -1,0 +1,129 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+// =============================================================================
+// OVERLAY — full-viewport container rendered via portal
+// =============================================================================
+
+.overlay {
+  // Hidden by default — pointer-events off so nothing is blocked when closed.
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+
+  &.overlayVisible {
+    pointer-events: auto;
+  }
+}
+
+// =============================================================================
+// BACKDROP
+// =============================================================================
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgb(0 0 0 / 0.5);
+  opacity: 0;
+  transition: opacity 250ms ease;
+
+  .overlayVisible & {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// =============================================================================
+// PANEL
+// =============================================================================
+
+.panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 480px;
+  max-width: 100vw;
+  background-color: $color-bg-surface;
+  box-shadow: $shadow-lg;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  // Slide in from right — starts fully off-screen to the right.
+  transform: translateX(100%);
+  transition: transform 250ms ease;
+
+  &.panelOpen {
+    transform: translateX(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  @include respond-to('tablet') {
+    width: 100vw;
+  }
+}
+
+// =============================================================================
+// HEADER
+// =============================================================================
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $color-border;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-dark;
+  margin: 0;
+}
+
+.closeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: $font-size-xl;
+  line-height: 1;
+  color: $color-text-medium;
+  background: none;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease;
+
+  &:hover {
+    color: $color-text-dark;
+    background-color: $color-bg-subtle;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+// =============================================================================
+// BODY — independently scrollable content area
+// =============================================================================
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-lg;
+}

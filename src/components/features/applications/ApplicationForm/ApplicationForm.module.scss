@@ -63,12 +63,19 @@
 }
 
 .cancelLink {
+  // Shared between <Link> and <button> usages.
+  display: inline-flex;
+  align-items: center;
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
+  font-family: $font-family-base;
   color: $color-text-medium;
   text-decoration: none;
   padding: $spacing-sm $spacing-md;
   border-radius: $radius-md;
+  background: none;
+  border: none;
+  cursor: pointer;
   transition: color 150ms ease, background-color 150ms ease;
 
   &:hover {

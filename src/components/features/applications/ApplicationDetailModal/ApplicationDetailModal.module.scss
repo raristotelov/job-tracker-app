@@ -1,0 +1,235 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+// =============================================================================
+// OVERLAY — full-viewport container rendered via portal
+// =============================================================================
+
+.overlay {
+  // Hidden by default — pointer-events off so nothing is blocked when closed.
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+
+  &.overlayVisible {
+    pointer-events: auto;
+  }
+}
+
+// =============================================================================
+// BACKDROP
+// =============================================================================
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgb(0 0 0 / 0.5);
+  opacity: 0;
+  transition: opacity 250ms ease;
+
+  .overlayVisible & {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// =============================================================================
+// PANEL — centered dialog
+// =============================================================================
+
+.panel {
+  position: relative;
+  z-index: 1001;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  background-color: $color-bg-surface;
+  box-shadow: $shadow-lg;
+  border-radius: $radius-lg;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  // Fade + subtle scale animation on open.
+  opacity: 0;
+  transform: scale(0.96) translateY(8px);
+  transition: opacity 250ms ease, transform 250ms ease;
+
+  &.panelOpen {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  @include respond-to('mobile') {
+    max-height: 90vh;
+  }
+}
+
+// =============================================================================
+// HEADER
+// =============================================================================
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $color-border;
+  flex-shrink: 0;
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  min-width: 0;
+}
+
+.title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-dark;
+  margin: 0;
+  line-height: $line-height-tight;
+}
+
+.company {
+  font-size: $font-size-base;
+  color: $color-text-medium;
+  margin: 0;
+}
+
+.closeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: $font-size-xl;
+  line-height: 1;
+  color: $color-text-medium;
+  background: none;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 150ms ease, background-color 150ms ease;
+
+  &:hover {
+    color: $color-text-dark;
+    background-color: $color-bg-subtle;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+// =============================================================================
+// BODY — independently scrollable content area
+// =============================================================================
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+// =============================================================================
+// DETAIL SECTIONS (matching ApplicationDetail layout)
+// =============================================================================
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+}
+
+.sectionTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-medium;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+// =============================================================================
+// FIELD GRID
+// =============================================================================
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md $spacing-xl;
+  margin: 0;
+
+  @include respond-to('mobile') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.fieldFull {
+  grid-column: 1 / -1;
+}
+
+.fieldLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-medium;
+}
+
+.fieldValue {
+  font-size: $font-size-base;
+  color: $color-text-dark;
+  margin: 0;
+  word-break: break-word;
+}
+
+.link {
+  color: $color-primary;
+  text-decoration: none;
+  word-break: break-all;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// =============================================================================
+// TIMESTAMPS
+// =============================================================================
+
+.timestamps {
+  font-size: $font-size-sm;
+  color: $color-text-light;
+}
+

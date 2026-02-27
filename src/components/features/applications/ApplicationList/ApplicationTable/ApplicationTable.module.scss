@@ -1,5 +1,5 @@
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as *;
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 .tableWrapper {
   width: 100%;
@@ -25,17 +25,32 @@
   border-bottom: 1px solid $color-border;
   white-space: nowrap;
 
-  // Column widths
-  &:nth-child(1) { width: 14%; }  // Section
-  &:nth-child(2) { width: 22%; }  // Company
-  &:nth-child(3) { width: 24%; }  // Position
-  &:nth-child(4) { width: 16%; }  // Location
-  &:nth-child(5) { width: 14%; }  // Status
-  &:nth-child(6) { width: 10%; }  // Date Applied
+  &:nth-child(1) {
+    width: 12%;
+  } // Section
+  &:nth-child(2) {
+    width: 19%;
+  } // Company
+  &:nth-child(3) {
+    width: 21%;
+  } // Position
+  &:nth-child(4) {
+    width: 13%;
+  } // Location
+  &:nth-child(5) {
+    width: 12%;
+  } // Status
+  &:nth-child(6) {
+    width: 12%;
+  } // Date Applied
+  &:nth-child(7) {
+    width: 11%;
+  } // Actions
 }
 
 .row {
   border-bottom: 1px solid $color-border;
+  cursor: pointer;
   transition: background-color 120ms ease;
 
   &:last-child {
@@ -44,6 +59,11 @@
 
   &:hover {
     background-color: $color-bg-subtle;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
   }
 }
 
@@ -77,11 +97,53 @@
   color: $color-text-light;
 }
 
-@include respond-to('tablet') {
+// Action buttons in each row's Actions cell.
+.editButton,
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  font-family: $font-family-base;
+  color: $color-primary;
+  border-radius: $radius-sm;
+  white-space: nowrap;
+  transition:
+    color 120ms ease,
+    background-color 120ms ease;
+
+  &:hover {
+    color: $color-text-dark;
+    background-color: $color-bg-subtle;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+.deleteButton {
+  color: $color-danger;
+
+  &:hover {
+    background-color: rgba($color-danger, 0.08);
+  }
+}
+
+// Give the actions cell spacing between buttons.
+.actionButtons {
+  gap: $spacing-sm;
+}
+
+@include respond-to("tablet") {
   .th,
   .td {
     &:nth-child(1),  // Section
-    &:nth-child(4) { // Location
+    &:nth-child(4) {
+      // Location
       display: none;
     }
   }
