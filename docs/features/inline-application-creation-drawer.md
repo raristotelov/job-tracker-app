@@ -1,8 +1,8 @@
 # Feature: Inline Application Creation and Editing Drawer
 
-**Status**: Draft
+**Status**: Complete
 **Created**: 2026-02-24
-**Last Updated**: 2026-02-27 (added `.actionButtons` spacing class)
+**Last Updated**: 2026-02-28
 **Author**: Product Docs Manager
 
 ---
@@ -41,18 +41,20 @@ An inline drawer eliminates those transitions for both flows. The user stays on 
 ### Functional Requirements
 
 1. The "Add Application" button on the applications list opens a side drawer panel containing the application creation form. No page navigation occurs.
-2. The applications table includes an "Actions" column as the last column. Each row contains an "Edit" button in this column.
+2. The applications table includes an "Actions" column as the last column. Each row contains an "Edit" button and a "Delete" button in this column.
 3. Clicking the "Edit" button for a row opens the same side drawer, pre-filled with that application's data, in edit mode.
-4. The drawer title reads "Add Application" in create mode and "Edit Application" in edit mode.
-5. The drawer can be dismissed by: clicking the close button inside the drawer, pressing the Escape key, or clicking the backdrop overlay.
-6. On successful form submission in either mode, the drawer closes, the applications list revalidates, and the table reflects the updated data. No page navigation occurs.
-7. On successful create submission, focus returns to the "Add Application" button that originally opened the drawer.
-8. On successful edit submission, focus returns to the "Edit" button of the row that was being edited.
-9. On form validation failure or server error in either mode, the drawer stays open and error messages are displayed inline — identical behavior to the current page-based form.
-10. The `/applications/new` page remains accessible and functional as a fallback. It is not removed or redirected.
-11. The `/applications/[id]/edit` page remains accessible and functional as a fallback. It is not removed or redirected.
-12. When the applications list is empty, the empty state's "Add Application" action opens the drawer rather than navigating to `/applications/new`.
-13. The sections dropdown in the drawer form is populated with the same sections data fetched by the page Server Component — no separate client-side fetch is needed.
+4. Clicking the "Delete" button for a row prompts a `window.confirm()` native browser dialog. On confirmation, the application is deleted via the `deleteApplication` server action and the list revalidates.
+5. Both the Edit and Delete buttons use `e.stopPropagation()` to prevent the row click (which opens the detail popup) from firing.
+6. The drawer title reads "Add Application" in create mode and "Edit Application" in edit mode.
+7. The drawer can be dismissed by: clicking the close button inside the drawer, pressing the Escape key, or clicking the backdrop overlay.
+8. On successful form submission in either mode, the drawer closes, the applications list revalidates, and the table reflects the updated data. No page navigation occurs.
+9. On successful create submission, focus returns to the "Add Application" button that originally opened the drawer.
+10. On successful edit submission, focus returns to the "Edit" button of the row that was being edited.
+11. On form validation failure or server error in either mode, the drawer stays open and error messages are displayed inline — identical behavior to the current page-based form.
+12. The `/applications/new` page remains accessible and functional as a fallback. It is not removed or redirected.
+13. The `/applications/[id]/edit` page remains accessible and functional as a fallback. It is not removed or redirected.
+14. When the applications list is empty, the empty state's "Add Application" action opens the drawer rather than navigating to `/applications/new`.
+15. The sections dropdown in the drawer form is populated with the same sections data fetched by the page Server Component — no separate client-side fetch is needed.
 
 ### UI/UX Requirements
 
@@ -111,6 +113,8 @@ An inline drawer eliminates those transitions for both flows. The user stays on 
     applications: ApplicationWithSection[];
     sections: Section[];
     onEditClick: (application: ApplicationWithSection, buttonEl: HTMLButtonElement) => void;
+    onDeleteClick: (application: ApplicationWithSection) => void;
+    onRowClick: (application: ApplicationWithSection) => void;
   }
   ```
 
@@ -226,16 +230,16 @@ Change:
 This sub-component renders the actual `<table>` element. Changes:
 
 - Add `onEditClick: (application: ApplicationWithSection, buttonEl: HTMLButtonElement) => void` prop.
+- Add `onDeleteClick: (application: ApplicationWithSection) => void` prop.
 - Add an "Actions" `<th>` as the final column header. Set `aria-label="Actions"` and leave its text content empty.
-- For each row, add an "Actions" `<td>` as the final cell containing an "Edit" `<button>`. The button calls `onEditClick(app)` and passes a ref to itself via a callback ref so that `ApplicationList` can store the element for focus restoration. Because the button element needs to be passed to the parent, the button should call `onEditClick` with both the application and the button's DOM element:
+- For each row, add an "Actions" `<td>` as the final cell containing an "Edit" `<button>` and a "Delete" `<button>`, wrapped in a `.actionButtons` container. Both buttons use `e.stopPropagation()` to prevent the row click from firing. The Edit button passes the DOM element to the parent for focus restoration:
   ```typescript
-  onClick={(e) => onEditClick(app, e.currentTarget)}
+  onClick={(e) => { e.stopPropagation(); onEditClick(app, e.currentTarget); }}
   ```
-- The `onEditClick` signature therefore becomes:
+  The Delete button calls:
   ```typescript
-  onEditClick: (application: ApplicationWithSection, buttonEl: HTMLButtonElement) => void;
+  onClick={(e) => { e.stopPropagation(); onDeleteClick(app); }}
   ```
-  Update `ApplicationListProps`, `ApplicationTable`'s prop type, and all call sites accordingly.
 
 #### `ApplicationTable.module.scss`
 
@@ -244,7 +248,8 @@ This sub-component renders the actual `<table>` element. Changes:
 Changes:
 - Add `.actionsCell` class: `text-align: right; white-space: nowrap; width: 1%;` (the `width: 1%` trick collapses the column to its minimum content width).
 - Add `.editButton` class: minimal button reset styles (`background: none; border: none; cursor: pointer; padding: ...`) plus sufficient color contrast for the "Edit" label text.
-- Add `.actionButtons` class: wraps the action buttons inside a cell (`display: inline-flex; gap: $spacing-sm`) to provide consistent spacing between buttons (e.g., Edit and Delete) when multiple actions appear in the same cell.
+- Add `.deleteButton` class: same button reset styles as `.editButton`, with a red/danger color to indicate destructive action.
+- Add `.actionButtons` class: wraps the Edit and Delete buttons inside a cell (`display: inline-flex; gap: $spacing-sm`) to provide consistent spacing between them.
 
 #### `ApplicationsPage`
 

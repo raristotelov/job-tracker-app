@@ -1,8 +1,8 @@
 # Feature: Status Tracking
 
-**Status**: Draft
+**Status**: Complete
 **Created**: 2026-02-22
-**Last Updated**: 2026-02-22
+**Last Updated**: 2026-02-28
 **Author**: Product Docs Manager
 
 ---
@@ -74,8 +74,9 @@ applied -> interview_scheduled -> interview_completed -> offer_received
   - `interview_completed`: purple
   - `offer_received`: green
   - `rejected`: red
-- On the detail view, a status selector (dropdown or segmented control) allows the user to pick a new status. Changing the selection and clicking "Save Status" persists the change. The badge updates to reflect the new value.
-- On the list view, the status badge is display-only. Changing status requires opening the detail view.
+- The `StatusSelector` component (`src/components/features/applications/StatusSelector/`) provides status changes. It renders a `<Select>` dropdown and a "Save Status" `<Button>`. The button is disabled when the selected status matches the current status. On error, the selector reverts to the previous value and displays an `ErrorBanner`.
+- `StatusSelector` is embedded in the `ApplicationDetailModal` (popup), not a standalone detail page. It is not inside the `ApplicationDetail` page component.
+- On the list view, the status badge is display-only. Changing status requires opening the detail popup.
 - The status field on the create/edit form shows all five options with their display labels.
 
 ### Data Requirements
@@ -98,11 +99,16 @@ CHECK (status IN ('applied', 'interview_scheduled', 'interview_completed', 'offe
 
 ### API/Integration Requirements
 
-Status is updated as part of the standard application update — no dedicated endpoint is needed:
+Status has a dedicated server action in `src/services/statusActions.ts`:
 
+```typescript
+export async function updateApplicationStatus(
+  id: string,
+  status: ApplicationStatus,
+): Promise<{ success: true } | { error: string }>
 ```
-supabase.from('applications').update({ status: newStatus }).eq('id', id)
-```
+
+Validation uses Zod: `statusUpdateSchema.safeParse(status)`. Invalid values return `{ error: 'Invalid status value.' }`. The action authenticates the user, scopes the update to `user_id`, and calls `revalidatePath(ROUTES.APPLICATIONS)` on success.
 
 The `updated_at` trigger on the `applications` table fires on any update, including a status-only change.
 
@@ -135,10 +141,10 @@ The `updated_at` trigger on the `applications` table fires on any update, includ
 - **When** the user changes the status to `applied` from the detail view and saves
 - **Then** the status is updated without any blocking warning or error
 
-### AC-6: Change Status — Same Value Is a No-op
+### AC-6: Change Status — Same Value Disables Save
 - **Given** an application has `applied` status
-- **When** the user selects `applied` again from the status selector and clicks "Save Status"
-- **Then** no database write occurs and no error is shown
+- **When** the user selects `applied` again from the status selector
+- **Then** the "Save Status" button is disabled, preventing a no-op write
 
 ### AC-7: Invalid Status Value Rejected
 - **Given** a status value not in the five defined values is submitted via any form or API call
@@ -154,7 +160,7 @@ The `updated_at` trigger on the `applications` table fires on any update, includ
 
 ## Edge Cases & Error Handling
 
-- **Network failure on status save**: The status selector reverts to the previous value and an error is shown: "Failed to update status. Please try again."
+- **Network failure on status save**: The status selector reverts to the previous value and an `ErrorBanner` is shown with the message: "Something went wrong. The status could not be updated. Please try again."
 - **Consistent display**: The `StatusBadge` component is shared between the list and detail views. Its output is determined solely by the status value, so there is no risk of the badge showing different text or colors in different contexts.
 
 ---
@@ -183,4 +189,5 @@ The `updated_at` trigger on the `applications` table fires on any update, includ
 ## Technical Notes
 
 - The `StatusBadge` component accepts a single `status: ApplicationStatus` prop and renders the correct label and SASS module color class. It contains no logic beyond that mapping.
-- Status values and their display labels should be defined in a single shared location (e.g., `lib/constants.ts`) so they are never duplicated across the codebase.
+- Status values and their display labels are defined in `src/constants/status.ts` (`APPLICATION_STATUSES` array and `STATUS_LABELS` map).
+- The `StatusSelector` component lives at `src/components/features/applications/StatusSelector/` and is a client component (`'use client'`). It uses local `useState` for the selected value, loading state, and error state.

@@ -1,8 +1,8 @@
 # Feature: Inline Application Detail Popup
 
-**Status**: Draft
+**Status**: Complete
 **Created**: 2026-02-27
-**Last Updated**: 2026-02-27
+**Last Updated**: 2026-02-28
 **Author**: Product Docs Manager
 
 ---
@@ -23,7 +23,7 @@ Every time the user wants to review an application's details, they are navigated
 
 - As a job seeker, I want to click an application row and immediately see all its details so that I can review it without leaving the list.
 - As a job seeker, I want to dismiss the popup and return to the list in the same scroll position so that I can continue scanning my pipeline.
-- As a job seeker, I want to navigate to the full detail page from the popup so that I have access to the detail page's additional actions (edit, delete).
+- As a job seeker, I want to change an application's status from the popup so that I can update my pipeline without extra navigation.
 
 ---
 
@@ -32,8 +32,8 @@ Every time the user wants to review an application's details, they are navigated
 ### Functional Requirements
 
 1. Clicking anywhere on an application row in the list (both "All" view and "By Section" view) opens the detail popup for that application. The click does not navigate the page.
-2. The popup displays all application fields: Position Title, Company Name, Status, Section, Location, Work Type, Salary Range, Date Applied, Job Posting URL, and the Created / Updated timestamps.
-3. The popup includes a "View Full Details" link that navigates to `/applications/[id]` for the displayed application.
+2. The popup displays all application fields: Position Title, Company Name, Status (badge + interactive StatusSelector), Section, Location, Work Type, Salary Range, Date Applied, Job Posting URL, and the Created / Updated timestamps.
+3. The popup embeds a `StatusSelector` component that allows the user to change the application's status directly. When the status is saved, the `onStatusChange` callback notifies the parent, which updates local state so the badge in the list reflects the change immediately.
 4. The popup can be dismissed by: clicking the close button, pressing the Escape key, or clicking the backdrop overlay.
 5. On dismiss, the list page remains in place with no navigation change.
 6. The `/applications/[id]` detail page is not removed or modified. It remains fully functional as a standalone route.
@@ -47,10 +47,10 @@ Every time the user wants to review an application's details, they are navigated
 - Z-index values: backdrop at 1000, popup panel at 1001 (consistent with the existing `SideDrawer` values).
 - Body scroll is locked while the popup is open.
 - The popup has a header containing the Position Title, Company Name, and a close button (X icon).
-- Below the header, application fields are rendered in the same layout and display format as `ApplicationDetail` (using `<dl>` / `<dt>` / `<dd>` field grid, `StatusBadge`, `formatDate`, `formatSalary`, `WORK_TYPE_LABELS`). Optional fields with no value show the `—` placeholder.
-- The "View Full Details" link is rendered at the bottom of the popup content area.
+- Below the header, the Status section shows both a `StatusBadge` and the interactive `StatusSelector`. Remaining fields are rendered in a `<dl>` / `<dt>` / `<dd>` grid using `formatDate`, `formatSalary`, and `WORK_TYPE_LABELS`. Optional fields with no value show the `—` placeholder.
 - Application rows in the table gain a pointer cursor and a visible focus ring to communicate their clickability.
 - Rows do not change their existing layout — no new columns or icons are added to indicate the click behavior. The entire row cell area is the click target.
+- The Edit and Delete buttons in the Actions column use `e.stopPropagation()` to prevent the row click (detail popup) from firing when those buttons are clicked.
 - The popup respects `prefers-reduced-motion`: the backdrop fade and any open/close animation are disabled when reduced motion is preferred; the popup appears and disappears instantly.
 
 ### Data Requirements
@@ -84,6 +84,7 @@ interface ApplicationDetailModalProps {
   application: ApplicationWithSection | null;
   isOpen: boolean;
   onClose: () => void;
+  onStatusChange: (newStatus: ApplicationStatus) => void;
 }
 ```
 
@@ -94,8 +95,8 @@ Responsibilities:
 - Closes when backdrop is clicked
 - Traps focus within the panel while open
 - Applies `role="dialog"`, `aria-modal="true"`, and `aria-labelledby` pointing to the title element (position title)
-- Renders all application fields using the same display utilities as `ApplicationDetail`: `StatusBadge`, `formatDate`, `formatSalary`, `WORK_TYPE_LABELS`
-- Renders a "View Full Details" link to `ROUTES.APPLICATION_DETAIL(application.id)` at the bottom of the content
+- Renders a `StatusBadge` and an interactive `StatusSelector` in the Status section. The `StatusSelector` calls `updateApplicationStatus` and on success invokes the `onStatusChange` prop so the parent can update local state.
+- Renders remaining application fields using `formatDate`, `formatSalary`, `WORK_TYPE_LABELS`
 
 When `application` is `null`, the modal renders nothing (returns `null`) regardless of `isOpen`. This keeps the component safe during the initial render before a row has ever been clicked.
 
@@ -125,7 +126,8 @@ Changes:
 - Add `openDetail(app: ApplicationWithSection)` handler: sets `selectedApplication = app` and `isDetailOpen = true`.
 - Add `closeDetail()` handler: sets `isDetailOpen = false`. `selectedApplication` is kept in state (not cleared to `null`) until after the close animation completes, to prevent the popup content from disappearing before the fade-out finishes. Clear `selectedApplication` after a suitable delay (e.g., 300ms) or on the animation end event.
 - Pass `onRowClick={openDetail}` to every `<ApplicationTable>` instance (both in the "All" view and in each group of the `BySectionView`).
-- Render `<ApplicationDetailModal>` at the bottom of the component's JSX, passing `application={selectedApplication}`, `isOpen={isDetailOpen}`, and `onClose={closeDetail}`.
+- Add a `handleStatusChange(newStatus)` handler that updates `selectedApplication` in local state with the new status, so the badge in the list and popup reflect the change immediately.
+- Render `<ApplicationDetailModal>` at the bottom of the component's JSX, passing `application={selectedApplication}`, `isOpen={isDetailOpen}`, `onClose={closeDetail}`, and `onStatusChange={handleStatusChange}`.
 - The `BySectionView` sub-component receives a new `onRowClick` prop and passes it through to each `<ApplicationTable>` it renders.
 
 ---
@@ -147,10 +149,10 @@ Changes:
 - **When** the popup opens
 - **Then** every field in the popup matches the data of the application in that row — not any other application
 
-### AC-4: View Full Details Link Navigates to Detail Page
-- **Given** the popup is open
-- **When** the user clicks "View Full Details"
-- **Then** the browser navigates to `/applications/[id]` for the displayed application
+### AC-4: Status Change from Popup
+- **Given** the popup is open for an application with status "Applied"
+- **When** the user selects "Interview Scheduled" from the StatusSelector and clicks "Save Status"
+- **Then** the status is updated in the database, the StatusBadge in the popup and list row updates to reflect the new status, and no page navigation occurs
 
 ### AC-5: Close Button Dismisses Popup
 - **Given** the popup is open
@@ -216,9 +218,10 @@ Changes:
 
 ## Out of Scope
 
-- Editing an application from within the popup. The edit flow remains in the drawer (per `inline-application-creation-drawer.md`) and the full edit page.
-- Deleting an application from within the popup. Delete remains on the full detail page only.
+- Editing an application from within the popup. The edit flow remains in the drawer (per `inline-application-creation-drawer.md`).
+- Deleting an application from within the popup. Delete is available via the table row's Delete button.
 - Adding or viewing notes from within the popup.
+- "View Full Details" link — the popup shows all fields and the StatusSelector, so a link to the standalone detail page was not needed.
 - Fetching fresh application data when the popup opens — the popup uses the list's already-fetched data only.
 - Real-time updates to popup content while it is open.
 - Showing the popup when navigating directly to `/applications/[id]` (the full page is always used for direct URL access).

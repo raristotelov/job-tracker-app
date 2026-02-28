@@ -17,12 +17,12 @@ This folder contains all product documentation for the Job Tracker App. Start he
 
 | Feature | Status | Document |
 |---|---|---|
-| Job Applications CRUD | Draft | [features/job-applications-crud.md](./features/job-applications-crud.md) |
-| Sections | Draft | [features/sections.md](./features/sections.md) |
-| Status Tracking | Draft | [features/status-tracking.md](./features/status-tracking.md) |
+| Job Applications CRUD | Complete | [features/job-applications-crud.md](./features/job-applications-crud.md) |
+| Sections | Complete | [features/sections.md](./features/sections.md) |
+| Status Tracking | Complete | [features/status-tracking.md](./features/status-tracking.md) |
 | Notes | Draft | [features/notes.md](./features/notes.md) |
-| Inline Application Creation Drawer | Draft | [features/inline-application-creation-drawer.md](./features/inline-application-creation-drawer.md) |
-| Inline Application Detail Popup | Draft | [features/inline-application-detail-popup.md](./features/inline-application-detail-popup.md) |
+| Inline Application Creation Drawer | Complete | [features/inline-application-creation-drawer.md](./features/inline-application-creation-drawer.md) |
+| Inline Application Detail Popup | Complete | [features/inline-application-detail-popup.md](./features/inline-application-detail-popup.md) |
 
 ---
 
