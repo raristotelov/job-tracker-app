@@ -1,0 +1,19 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-md;
+
+  @include respond-to('mobile') {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

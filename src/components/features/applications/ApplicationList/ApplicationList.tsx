@@ -5,7 +5,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { ApplicationDrawer } from '@/components/features/applications/ApplicationDrawer';
 import { ApplicationDetailModal } from '@/components/features/applications/ApplicationDetailModal';
 import { deleteApplication } from '@/services/applications';
-import type { ApplicationWithSection, Section } from '@/types';
+import type { ApplicationWithSection, Section, ApplicationStatus } from '@/types';
 import { ViewToggle, type ViewMode } from './ViewToggle';
 import { ApplicationTable } from './ApplicationTable';
 import styles from './ApplicationList.module.scss';
@@ -67,6 +67,12 @@ export function ApplicationList({ applications, sections }: ApplicationListProps
     // Keep selectedApplication set until the close animation completes (300ms)
     // so the popup content doesn't disappear before the fade-out finishes.
     setTimeout(() => setSelectedApplication(null), 300);
+  };
+
+  const handleStatusChange = (newStatus: ApplicationStatus) => {
+    setSelectedApplication((prev) =>
+      prev ? { ...prev, status: newStatus } : null,
+    );
   };
 
   const handleDelete = async (app: ApplicationWithSection) => {
@@ -132,6 +138,7 @@ export function ApplicationList({ applications, sections }: ApplicationListProps
         application={selectedApplication}
         isOpen={isDetailOpen}
         onClose={closeDetail}
+        onStatusChange={handleStatusChange}
       />
     </div>
   );

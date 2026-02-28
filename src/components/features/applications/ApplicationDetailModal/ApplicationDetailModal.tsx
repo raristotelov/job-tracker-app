@@ -3,10 +3,11 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { StatusSelector } from '@/components/features/applications/StatusSelector';
 import { formatDate } from '@/lib/utils/formatDate';
 import { formatSalary } from '@/lib/utils/formatSalary';
 import { WORK_TYPE_LABELS } from '@/constants/workType';
-import type { ApplicationWithSection } from '@/types';
+import type { ApplicationWithSection, ApplicationStatus } from '@/types';
 import styles from './ApplicationDetailModal.module.scss';
 
 // =============================================================================
@@ -34,6 +35,7 @@ interface ApplicationDetailModalProps {
   application: ApplicationWithSection | null;
   isOpen: boolean;
   onClose: () => void;
+  onStatusChange: (newStatus: ApplicationStatus) => void;
 }
 
 const PLACEHOLDER = '—';
@@ -51,6 +53,7 @@ export function ApplicationDetailModal({
   application,
   isOpen,
   onClose,
+  onStatusChange,
 }: ApplicationDetailModalProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -187,6 +190,11 @@ export function ApplicationDetailModal({
           <section className={styles.section}>
             <h3 className={styles.sectionTitle}>Status</h3>
             <StatusBadge status={status} />
+            <StatusSelector
+              applicationId={application.id}
+              currentStatus={status}
+              onStatusChange={onStatusChange}
+            />
           </section>
 
           {/* Job Details */}

@@ -144,3 +144,6 @@ export const applicationCreateSchema = applicationBaseSchema;
  * Identical validation rules to the create schema.
  */
 export const applicationUpdateSchema = applicationBaseSchema;
+
+/** Standalone status enum validator for single-field status updates. */
+export const statusUpdateSchema = z.enum(STATUS_VALUES);
