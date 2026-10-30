@@ -6,23 +6,23 @@ This folder contains all product documentation for the Job Tracker App. Start he
 
 ## Project
 
-| Document | Description |
-|---|---|
-| [project-overview.md](./project-overview.md) | High-level summary, goals, tech stack, data model overview, and non-goals |
-| [architecture.md](./architecture.md) | Full architecture plan: system design, database schema, folder structure, task breakdown, TypeScript types |
+| Document                                     | Description                                                                                                |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| [project-overview.md](./project-overview.md) | High-level summary, goals, tech stack, data model overview, and non-goals                                  |
+| [architecture.md](./architecture.md)         | Full architecture plan: system design, database schema, folder structure, task breakdown, TypeScript types |
 
 ---
 
 ## Feature Specifications
 
-| Feature | Status | Document |
-|---|---|---|
-| Job Applications CRUD | Complete | [features/job-applications-crud.md](./features/job-applications-crud.md) |
-| Sections | Complete | [features/sections.md](./features/sections.md) |
-| Status Tracking | Complete | [features/status-tracking.md](./features/status-tracking.md) |
-| Notes | Draft | [features/notes.md](./features/notes.md) |
+| Feature                            | Status   | Document                                                                                           |
+| ---------------------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| Job Applications CRUD              | Complete | [features/job-applications-crud.md](./features/job-applications-crud.md)                           |
+| Sections                           | Complete | [features/sections.md](./features/sections.md)                                                     |
+| Status Tracking                    | Complete | [features/status-tracking.md](./features/status-tracking.md)                                       |
+| Notes                              | Draft    | [features/notes.md](./features/notes.md)                                                           |
 | Inline Application Creation Drawer | Complete | [features/inline-application-creation-drawer.md](./features/inline-application-creation-drawer.md) |
-| Inline Application Detail Popup | Complete | [features/inline-application-detail-popup.md](./features/inline-application-detail-popup.md) |
+| Inline Application Detail Popup    | Complete | [features/inline-application-detail-popup.md](./features/inline-application-detail-popup.md)       |
 
 ---
 
@@ -44,10 +44,10 @@ This folder contains all product documentation for the Job Tracker App. Start he
 
 ## Document Status Key
 
-| Status | Meaning |
-|---|---|
-| Draft | Written, not yet reviewed or approved |
-| In Review | Under active review with stakeholders |
-| Approved | Signed off, ready for development |
-| In Development | Currently being built |
-| Complete | Built and shipped |
+| Status         | Meaning                               |
+| -------------- | ------------------------------------- |
+| Draft          | Written, not yet reviewed or approved |
+| In Review      | Under active review with stakeholders |
+| Approved       | Signed off, ready for development     |
+| In Development | Currently being built                 |
+| Complete       | Built and shipped                     |

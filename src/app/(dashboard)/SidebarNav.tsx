@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { ROUTES } from '@/constants/routes';
-import { logout } from '@/services/auth';
-import styles from './layout.module.scss';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
+import { logout } from "@/services/auth";
+import styles from "./layout.module.scss";
 
 interface NavLink {
   label: string;
@@ -12,8 +12,8 @@ interface NavLink {
 }
 
 const NAV_LINKS: NavLink[] = [
-  { label: 'Applications', href: ROUTES.APPLICATIONS },
-  { label: 'Sections', href: ROUTES.SECTIONS },
+  { label: "Applications", href: ROUTES.APPLICATIONS },
+  { label: "Sections", href: ROUTES.SECTIONS },
 ];
 
 interface SidebarNavProps {
@@ -39,8 +39,8 @@ export function SidebarNav({ userEmail }: SidebarNavProps) {
               <li key={href} className={styles.navItem}>
                 <Link
                   href={href}
-                  className={`${styles.navLink}${isActive ? ` ${styles.navLinkActive}` : ''}`}
-                  aria-current={isActive ? 'page' : undefined}
+                  className={`${styles.navLink}${isActive ? ` ${styles.navLinkActive}` : ""}`}
+                  aria-current={isActive ? "page" : undefined}
                 >
                   {label}
                 </Link>

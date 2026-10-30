@@ -1,8 +1,8 @@
-'use server';
+"use server";
 
-import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { ROUTES } from '@/constants/routes';
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { ROUTES } from "@/constants/routes";
 
 /** Return type for auth actions that can fail without redirecting. */
 interface AuthError {
@@ -15,8 +15,8 @@ interface AuthError {
  * Returns `{ error }` on failure so the form can display the message.
  */
 export async function login(formData: FormData): Promise<AuthError | never> {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
   const supabase = await createClient();
 
@@ -36,8 +36,8 @@ export async function login(formData: FormData): Promise<AuthError | never> {
  * Returns `{ error }` on failure so the form can display the message.
  */
 export async function signup(formData: FormData): Promise<AuthError | never> {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
   const supabase = await createClient();
 

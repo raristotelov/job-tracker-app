@@ -1,5 +1,5 @@
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as *;
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 // =============================================================================
 // AUTH LAYOUT — Full-viewport centered card
@@ -25,7 +25,7 @@
   box-shadow: $shadow-md;
   padding: $spacing-2xl $spacing-xl;
 
-  @include respond-to('mobile') {
+  @include respond-to("mobile") {
     padding: $spacing-xl $spacing-lg;
   }
 }

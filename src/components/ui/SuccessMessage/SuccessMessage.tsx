@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import styles from './SuccessMessage.module.scss';
+import { useEffect } from "react";
+import styles from "./SuccessMessage.module.scss";
 
 const AUTO_DISMISS_DELAY_MS = 3000;
 
@@ -25,12 +25,7 @@ export function SuccessMessage({ message, onDismiss }: SuccessMessageProps) {
     <div className={styles.banner} role="status" aria-live="polite">
       <p className={styles.message}>{message}</p>
       {onDismiss ? (
-        <button
-          type="button"
-          className={styles.dismiss}
-          onClick={onDismiss}
-          aria-label="Dismiss message"
-        >
+        <button type="button" className={styles.dismiss} onClick={onDismiss} aria-label="Dismiss message">
           <span aria-hidden="true">&times;</span>
         </button>
       ) : null}

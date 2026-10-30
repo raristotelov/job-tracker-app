@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { SideDrawer } from '@/components/ui/SideDrawer';
-import { ApplicationForm } from '@/components/features/applications/ApplicationForm';
-import type { ApplicationWithSection, Section } from '@/types';
-import styles from './ApplicationDrawer.module.scss';
+import { SideDrawer } from "@/components/ui/SideDrawer";
+import { ApplicationForm } from "@/components/features/applications/ApplicationForm";
+import type { ApplicationWithSection, Section } from "@/types";
+import styles from "./ApplicationDrawer.module.scss";
 
 // =============================================================================
 // TYPES
@@ -34,23 +34,13 @@ interface ApplicationDrawerProps {
  * - Sections are passed through from the parent Server Component — no
  *   additional client-side fetch is needed.
  */
-export function ApplicationDrawer({
-  isOpen,
-  onClose,
-  sections,
-  editTarget,
-}: ApplicationDrawerProps) {
-  const title = editTarget ? 'Edit Application' : 'Add Application';
+export function ApplicationDrawer({ isOpen, onClose, sections, editTarget }: ApplicationDrawerProps) {
+  const title = editTarget ? "Edit Application" : "Add Application";
 
   return (
     <SideDrawer isOpen={isOpen} onClose={onClose} title={title}>
       <div className={styles.formWrapper}>
-        <ApplicationForm
-          sections={sections}
-          initialData={editTarget}
-          onSuccess={onClose}
-          onCancel={onClose}
-        />
+        <ApplicationForm sections={sections} initialData={editTarget} onSuccess={onClose} onCancel={onClose} />
       </div>
     </SideDrawer>
   );

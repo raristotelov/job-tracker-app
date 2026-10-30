@@ -1,6 +1,6 @@
-@use 'sass:color';
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as *;
+@use "sass:color";
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 .form {
   display: flex;
@@ -46,7 +46,7 @@
   grid-template-columns: 1fr 1fr;
   gap: $spacing-md;
 
-  @include respond-to('tablet') {
+  @include respond-to("tablet") {
     grid-template-columns: 1fr;
   }
 }
@@ -76,7 +76,9 @@
   background: none;
   border: none;
   cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
 
   &:hover {
     color: $color-text-dark;

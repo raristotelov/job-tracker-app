@@ -1,1 +1,1 @@
-export { ApplicationTable } from './ApplicationTable';
+export { ApplicationTable } from "./ApplicationTable";

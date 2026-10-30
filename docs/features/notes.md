@@ -69,14 +69,14 @@ Structured fields capture facts, but the hiring process generates a lot of unstr
 
 **`notes` table:**
 
-| Column | Type | Required | Notes |
-|---|---|---|---|
-| `id` | `uuid` | Yes | Primary key, auto-generated |
-| `application_id` | `uuid` | Yes | FK to `applications.id`, ON DELETE CASCADE |
-| `user_id` | `uuid` | Yes | FK to `auth.users`, set from session |
-| `content` | `jsonb` | Yes | Rich text stored as editor JSON document. Must not represent an empty document. |
-| `created_at` | `timestamptz` | Yes | Auto-set on insert |
-| `updated_at` | `timestamptz` | Yes | Auto-set on insert and update via DB trigger |
+| Column           | Type          | Required | Notes                                                                           |
+| ---------------- | ------------- | -------- | ------------------------------------------------------------------------------- |
+| `id`             | `uuid`        | Yes      | Primary key, auto-generated                                                     |
+| `application_id` | `uuid`        | Yes      | FK to `applications.id`, ON DELETE CASCADE                                      |
+| `user_id`        | `uuid`        | Yes      | FK to `auth.users`, set from session                                            |
+| `content`        | `jsonb`       | Yes      | Rich text stored as editor JSON document. Must not represent an empty document. |
+| `created_at`     | `timestamptz` | Yes      | Auto-set on insert                                                              |
+| `updated_at`     | `timestamptz` | Yes      | Auto-set on insert and update via DB trigger                                    |
 
 ```typescript
 interface Note {
@@ -97,6 +97,7 @@ interface Note {
 - **Delete**: `supabase.from('notes').delete().eq('id', noteId)`
 
 RLS policy:
+
 ```sql
 CREATE POLICY "Users manage own notes"
 ON notes FOR ALL
@@ -109,71 +110,85 @@ WITH CHECK (auth.uid() = user_id);
 ## Acceptance Criteria
 
 ### AC-1: Add a Note — Happy Path
+
 - **Given** the user is on the detail view for an application
 - **When** the user types content into the rich text editor and clicks "Add Note"
 - **Then** a new note record is created in the database, it appears at the top of the Notes section with its formatted content and creation timestamp, and the editor is cleared and collapsed back to its default state
 
 ### AC-2: Add a Note — Empty Submission Prevented
+
 - **Given** the rich text editor contains no visible text content (e.g., the user opened it but typed nothing)
 - **When** the user attempts to click "Add Note"
 - **Then** the button is disabled and no note is created
 
 ### AC-3: Add a Note — Formatting Preserved on Save
+
 - **Given** the user composes a note using heading, bullet list, and bold formatting
 - **When** the user clicks "Add Note"
 - **Then** the saved note renders with all applied formatting intact — headings display at the correct size, bullets appear as a list, and bold text is visually bold
 
 ### AC-4: URL in Note — Clickable Link
+
 - **Given** the user adds a note containing a URL (either as a hyperlink applied to text, or a bare URL typed into the editor)
 - **When** the note is saved and displayed in read-only mode
 - **Then** the URL is rendered as a clickable link that opens in a new browser tab
 
 ### AC-5: Notes Display Order
+
 - **Given** an application has multiple notes created at different times
 - **When** the user views the detail page
 - **Then** notes appear in reverse-chronological order with the most recent at the top
 
 ### AC-6: Edit a Note — Happy Path
+
 - **Given** a note exists with formatted content
 - **When** the user clicks "Edit", the rich text editor opens pre-filled with the existing content and formatting, the user makes changes, and clicks "Save"
 - **Then** the note is updated in the database, the card shows the new formatted content in read-only mode, and an "edited" indicator with the updated timestamp appears
 
 ### AC-7: Edit a Note — Formatting Survives Round-trip
+
 - **Given** a note was saved with bullet list and bold formatting
 - **When** the user opens the note for editing
 - **Then** the editor loads with the original formatting intact — bullets are still bullets, bold text is still bold
 
 ### AC-8: Edit a Note — Cancel Discards Changes
+
 - **Given** a note is in edit mode with unsaved changes
 - **When** the user clicks "Cancel"
 - **Then** the card returns to read-only mode with the original content and formatting, and no database write occurs
 
 ### AC-9: Edit a Note — Empty Content Prevented
+
 - **Given** a note is in edit mode
 - **When** the user removes all visible content and clicks "Save"
 - **Then** the save is blocked and an inline message reads "Note cannot be empty"
 
 ### AC-10: Delete a Note — Inline Confirmation
+
 - **Given** the user clicks "Delete" on a note
 - **When** the confirmation appears
 - **Then** it shows "Delete this note?" with "Yes, delete" and "Cancel" directly on the note card — no modal
 
 ### AC-11: Delete a Note — Confirmed
+
 - **Given** the inline delete confirmation is showing
 - **When** the user clicks "Yes, delete"
 - **Then** the note is permanently deleted and immediately removed from the Notes section
 
 ### AC-12: Delete a Note — Cancelled
+
 - **Given** the inline delete confirmation is showing
 - **When** the user clicks "Cancel"
 - **Then** no deletion occurs and the note returns to its normal read-only state
 
 ### AC-13: Empty State
+
 - **Given** an application has no notes
 - **When** the user views the detail page
 - **Then** the Notes section shows "No notes yet."
 
 ### AC-14: Notes Deleted with Application
+
 - **Given** an application has notes attached to it
 - **When** the application is deleted
 - **Then** all associated note records are also deleted with no orphaned rows remaining in the `notes` table

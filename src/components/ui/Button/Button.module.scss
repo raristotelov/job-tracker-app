@@ -1,6 +1,6 @@
-@use 'sass:color';
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as *;
+@use "sass:color";
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 // =============================================================================
 // BUTTON BASE
@@ -18,7 +18,10 @@
   border: 1px solid transparent;
   border-radius: $radius-md;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease, opacity 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    opacity 150ms ease;
   white-space: nowrap;
   text-decoration: none;
 

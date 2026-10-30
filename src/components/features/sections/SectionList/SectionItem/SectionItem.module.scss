@@ -1,6 +1,6 @@
-@use 'sass:color';
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as *;
+@use "sass:color";
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 // =============================================================================
 // ITEM SHELL
@@ -27,7 +27,7 @@
   justify-content: space-between;
   gap: $spacing-md;
 
-  @include respond-to('mobile') {
+  @include respond-to("mobile") {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -69,7 +69,7 @@
   align-items: flex-start;
   gap: $spacing-md;
 
-  @include respond-to('mobile') {
+  @include respond-to("mobile") {
     flex-direction: column;
     align-items: stretch;
   }
@@ -93,7 +93,9 @@
   border: 1px solid $color-border;
   border-radius: $radius-md;
   outline: none;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
 
   &:focus {
     border-color: $color-primary;

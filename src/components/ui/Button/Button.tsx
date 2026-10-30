@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { ButtonHTMLAttributes, ReactNode } from 'react';
-import styles from './Button.module.scss';
+import { ButtonHTMLAttributes, ReactNode } from "react";
+import styles from "./Button.module.scss";
 
-type ButtonVariant = 'primary' | 'secondary' | 'destructive';
-type ButtonSize = 'sm' | 'md' | 'lg';
+type ButtonVariant = "primary" | "secondary" | "destructive";
+type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -25,42 +25,21 @@ const sizeClassMap: Record<ButtonSize, string> = {
   lg: styles.sizeLg,
 };
 
-export function Button({
-  variant = 'primary',
-  size = 'md',
-  isLoading = false,
-  children,
-  className,
-  disabled,
-  ...rest
-}: ButtonProps) {
+export function Button({ variant = "primary", size = "md", isLoading = false, children, className, disabled, ...rest }: ButtonProps) {
   const isDisabled = disabled || isLoading;
 
-  const classNames = [
-    styles.button,
-    variantClassMap[variant],
-    sizeClassMap[size],
-    isLoading ? styles.loading : '',
-    className ?? '',
-  ]
+  const classNames = [styles.button, variantClassMap[variant], sizeClassMap[size], isLoading ? styles.loading : "", className ?? ""]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   return (
-    <button
-      className={classNames}
-      disabled={isDisabled}
-      aria-busy={isLoading}
-      {...rest}
-    >
+    <button className={classNames} disabled={isDisabled} aria-busy={isLoading} {...rest}>
       {isLoading ? (
         <span className={styles.spinnerWrapper} aria-hidden="true">
           <span className={styles.spinner} />
         </span>
       ) : null}
-      <span className={isLoading ? styles.hiddenText : undefined}>
-        {children}
-      </span>
+      <span className={isLoading ? styles.hiddenText : undefined}>{children}</span>
     </button>
   );
 }

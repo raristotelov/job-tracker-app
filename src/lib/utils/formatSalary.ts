@@ -1,7 +1,7 @@
 /** USD formatter with no decimal places, using compact thousands notation. */
-const usdFormatter = new Intl.NumberFormat('en-US', {
-  style:                 'currency',
-  currency:              'USD',
+const usdFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
   minimumFractionDigits: 0,
   maximumFractionDigits: 0,
 });
@@ -32,5 +32,5 @@ export function formatSalary(min: number | null, max: number | null): string {
     return `Up to ${usdFormatter.format(max)}`;
   }
 
-  return '—';
+  return "—";
 }

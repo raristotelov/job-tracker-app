@@ -1,4 +1,4 @@
-@use '@/styles/variables' as *;
+@use "@/styles/variables" as *;
 
 .toggle {
   display: inline-flex;
@@ -16,7 +16,9 @@
   color: $color-text-medium;
   border: none;
   cursor: pointer;
-  transition: background-color 150ms ease, color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
 
   &:hover:not(.active) {
     background-color: $color-bg-subtle;

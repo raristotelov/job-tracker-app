@@ -6,10 +6,7 @@ import styles from "./ApplicationTable.module.scss";
 interface ApplicationTableProps {
   applications: ApplicationWithSection[];
   sections: Section[];
-  onEditClick: (
-    application: ApplicationWithSection,
-    buttonEl: HTMLButtonElement,
-  ) => void;
+  onEditClick: (application: ApplicationWithSection, buttonEl: HTMLButtonElement) => void;
   onDeleteClick: (application: ApplicationWithSection) => void;
   onRowClick: (application: ApplicationWithSection) => void;
 }
@@ -23,13 +20,7 @@ interface ApplicationTableProps {
  * Optional fields that are null are shown as an em dash.
  * Text that overflows a cell is truncated with an ellipsis.
  */
-export function ApplicationTable({
-  applications,
-  sections: _sections,
-  onEditClick,
-  onDeleteClick,
-  onRowClick,
-}: ApplicationTableProps) {
+export function ApplicationTable({ applications, sections: _sections, onEditClick, onDeleteClick, onRowClick }: ApplicationTableProps) {
   return (
     <div className={styles.tableWrapper}>
       <table className={styles.table}>
@@ -62,11 +53,7 @@ export function ApplicationTable({
             >
               <td className={styles.td}>
                 <span className={styles.rowLink}>
-                  <span className={`${styles.cellText} ${styles.muted}`}>
-                    {app.sections?.name ?? (
-                      <span className={styles.placeholder}>—</span>
-                    )}
-                  </span>
+                  <span className={`${styles.cellText} ${styles.muted}`}>{app.sections?.name ?? <span className={styles.placeholder}>—</span>}</span>
                 </span>
               </td>
               <td className={styles.td}>
@@ -81,11 +68,7 @@ export function ApplicationTable({
               </td>
               <td className={styles.td}>
                 <span className={styles.rowLink}>
-                  <span className={`${styles.cellText} ${styles.muted}`}>
-                    {app.location ?? (
-                      <span className={styles.placeholder}>—</span>
-                    )}
-                  </span>
+                  <span className={`${styles.cellText} ${styles.muted}`}>{app.location ?? <span className={styles.placeholder}>—</span>}</span>
                 </span>
               </td>
               <td className={styles.td}>
@@ -95,9 +78,7 @@ export function ApplicationTable({
               </td>
               <td className={styles.td}>
                 <span className={styles.rowLink}>
-                  <span className={`${styles.cellText} ${styles.muted}`}>
-                    {formatDate(app.date_applied)}
-                  </span>
+                  <span className={`${styles.cellText} ${styles.muted}`}>{formatDate(app.date_applied)}</span>
                 </span>
               </td>
               <td className={styles.td}>

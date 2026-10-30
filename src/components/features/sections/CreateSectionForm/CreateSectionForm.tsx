@@ -1,18 +1,16 @@
-'use client';
+"use client";
 
-import { useActionState, useState } from 'react';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { ErrorBanner } from '@/components/ui/ErrorBanner';
-import { createSection } from '@/services/sections';
-import type { SectionActionError } from '@/services/sections';
-import styles from './CreateSectionForm.module.scss';
+import { useActionState, useState } from "react";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
+import { createSection } from "@/services/sections";
+import type { SectionActionError } from "@/services/sections";
+import styles from "./CreateSectionForm.module.scss";
 
-type FormState =
-  | { status: 'idle' }
-  | { status: 'error'; error: string; fieldErrors?: { name?: string } };
+type FormState = { status: "idle" } | { status: "error"; error: string; fieldErrors?: { name?: string } };
 
-const INITIAL_STATE: FormState = { status: 'idle' };
+const INITIAL_STATE: FormState = { status: "idle" };
 
 /**
  * Inline form for creating a new section.
@@ -26,27 +24,23 @@ export function CreateSectionForm() {
   // inputs (the name input) to their defaultValue without extra state.
   const [formKey, setFormKey] = useState(0);
 
-  const [state, formAction, isPending] = useActionState<FormState, FormData>(
-    async (_prev, formData) => {
-      const result: SectionActionError | null = await createSection(formData);
+  const [state, formAction, isPending] = useActionState<FormState, FormData>(async (_prev, formData) => {
+    const result: SectionActionError | null = await createSection(formData);
 
-      if (result === null) {
-        setFormKey((k) => k + 1);
-        return INITIAL_STATE;
-      }
+    if (result === null) {
+      setFormKey((k) => k + 1);
+      return INITIAL_STATE;
+    }
 
-      return {
-        status: 'error' as const,
-        error: result.error,
-        fieldErrors: result.fieldErrors,
-      };
-    },
-    INITIAL_STATE,
-  );
+    return {
+      status: "error" as const,
+      error: result.error,
+      fieldErrors: result.fieldErrors,
+    };
+  }, INITIAL_STATE);
 
-  const fieldError = state.status === 'error' ? state.fieldErrors?.name : undefined;
-  const topError =
-    state.status === 'error' && !state.fieldErrors ? state.error : undefined;
+  const fieldError = state.status === "error" ? state.fieldErrors?.name : undefined;
+  const topError = state.status === "error" && !state.fieldErrors ? state.error : undefined;
 
   return (
     <form key={formKey} action={formAction} className={styles.form} noValidate>

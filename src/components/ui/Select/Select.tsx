@@ -1,5 +1,5 @@
-import { SelectHTMLAttributes } from 'react';
-import styles from './Select.module.scss';
+import { SelectHTMLAttributes } from "react";
+import styles from "./Select.module.scss";
 
 interface SelectOption {
   value: string;
@@ -14,22 +14,8 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   placeholder?: string;
 }
 
-export function Select({
-  label,
-  id,
-  options,
-  error,
-  placeholder,
-  className,
-  ...rest
-}: SelectProps) {
-  const selectClassNames = [
-    styles.select,
-    error ? styles.selectError : '',
-    className ?? '',
-  ]
-    .filter(Boolean)
-    .join(' ');
+export function Select({ label, id, options, error, placeholder, className, ...rest }: SelectProps) {
+  const selectClassNames = [styles.select, error ? styles.selectError : "", className ?? ""].filter(Boolean).join(" ");
 
   return (
     <div className={styles.wrapper}>

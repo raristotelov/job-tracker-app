@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
-import { ROUTES } from '@/constants/routes';
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 
 /**
  * Root page — immediately redirects to the applications dashboard.

@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import styles from './EmptyState.module.scss';
+import Link from "next/link";
+import styles from "./EmptyState.module.scss";
 
 interface EmptyStateProps {
   message: string;

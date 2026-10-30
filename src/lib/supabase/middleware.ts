@@ -1,5 +1,5 @@
-import { createServerClient } from '@supabase/ssr';
-import type { NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from "@supabase/ssr";
+import type { NextRequest, NextResponse } from "next/server";
 
 /**
  * Creates a Supabase client configured for use inside Next.js middleware.
@@ -17,27 +17,23 @@ import type { NextRequest, NextResponse } from 'next/server';
  *                 the calling middleware.
  */
 export function createClient(request: NextRequest, response: NextResponse) {
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          // Apply cookies to both the request (so the server sees them during
-          // this request cycle) and the response (so the browser receives them).
-          cookiesToSet.forEach(({ name, value }) => {
-            request.cookies.set(name, value);
-          });
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
-          });
-        },
+  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        // Apply cookies to both the request (so the server sees them during
+        // this request cycle) and the response (so the browser receives them).
+        cookiesToSet.forEach(({ name, value }) => {
+          request.cookies.set(name, value);
+        });
+        cookiesToSet.forEach(({ name, value, options }) => {
+          response.cookies.set(name, value, options);
+        });
       },
     },
-  );
+  });
 
   return { supabase, response };
 }

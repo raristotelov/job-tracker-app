@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import styles from './ErrorBanner.module.scss';
+import styles from "./ErrorBanner.module.scss";
 
 interface ErrorBannerProps {
   message: string;
@@ -12,12 +12,7 @@ export function ErrorBanner({ message, onDismiss }: ErrorBannerProps) {
     <div className={styles.banner} role="alert" aria-live="assertive">
       <p className={styles.message}>{message}</p>
       {onDismiss ? (
-        <button
-          type="button"
-          className={styles.dismiss}
-          onClick={onDismiss}
-          aria-label="Dismiss error"
-        >
+        <button type="button" className={styles.dismiss} onClick={onDismiss} aria-label="Dismiss error">
           <span aria-hidden="true">&times;</span>
         </button>
       ) : null}

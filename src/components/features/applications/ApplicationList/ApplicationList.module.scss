@@ -1,5 +1,5 @@
-@use 'sass:color';
-@use '@/styles/variables' as *;
+@use "sass:color";
+@use "@/styles/variables" as *;
 
 .container {
   display: flex;
@@ -34,7 +34,9 @@
   color: $color-bg-surface;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
 
   &:hover {
     background-color: color.scale($color-primary, $lightness: -15%);

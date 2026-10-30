@@ -1,5 +1,5 @@
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as *;
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 // =============================================================================
 // DASHBOARD LAYOUT — Sidebar + main content shell
@@ -72,7 +72,9 @@
   font-weight: $font-weight-medium;
   color: $color-text-medium;
   text-decoration: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
     background-color: $color-bg-subtle;
@@ -121,7 +123,10 @@
   border: 1px solid $color-border;
   border-radius: $radius-sm;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
 
   &:hover {
     background-color: $color-bg-subtle;
@@ -145,7 +150,7 @@
 // RESPONSIVE — Mobile: top nav bar instead of sidebar
 // =============================================================================
 
-@include respond-to('tablet') {
+@include respond-to("tablet") {
   .root {
     flex-direction: column;
   }

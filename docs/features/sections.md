@@ -56,13 +56,13 @@ Different job seekers organize their search differently. One person might separa
 
 **`sections` table:**
 
-| Column | Type | Required | Notes |
-|---|---|---|---|
-| `id` | `uuid` | Yes | Primary key, auto-generated |
-| `user_id` | `uuid` | Yes | FK to `auth.users`, set from session |
-| `name` | `text` | Yes | Max 100 characters. Unique per user (case-insensitive) |
-| `created_at` | `timestamptz` | Yes | Auto-set on insert |
-| `updated_at` | `timestamptz` | Yes | Auto-set on insert and update via DB trigger |
+| Column       | Type          | Required | Notes                                                  |
+| ------------ | ------------- | -------- | ------------------------------------------------------ |
+| `id`         | `uuid`        | Yes      | Primary key, auto-generated                            |
+| `user_id`    | `uuid`        | Yes      | FK to `auth.users`, set from session                   |
+| `name`       | `text`        | Yes      | Max 100 characters. Unique per user (case-insensitive) |
+| `created_at` | `timestamptz` | Yes      | Auto-set on insert                                     |
+| `updated_at` | `timestamptz` | Yes      | Auto-set on insert and update via DB trigger           |
 
 The `applications.section_id` column is a nullable FK to `sections.id` with `ON DELETE SET NULL`. Deleting a section row sets `section_id` to null on all related application rows automatically at the database level.
 
@@ -91,6 +91,7 @@ interface SectionWithCount extends Section {
 - **Delete**: `supabase.from('sections').delete().eq('id', id)` — the `ON DELETE SET NULL` FK constraint on `applications.section_id` handles nullifying related records automatically.
 
 RLS policy:
+
 ```sql
 CREATE POLICY "Users manage own sections"
 ON sections FOR ALL
@@ -106,76 +107,91 @@ For the application form's section dropdown, all sections are fetched with:
 ## Acceptance Criteria
 
 ### AC-1: Create a Section — Happy Path
+
 - **Given** the user is on the Sections management page
 - **When** the user types a name into the section input and clicks "Create"
 - **Then** a new section is created in the database, it appears in the sections list alphabetically, and the input is cleared
 
 ### AC-2: Create a Section — Empty Name Prevented
+
 - **Given** the user is on the Sections management page
 - **When** the user submits the create form with an empty name or whitespace only
 - **Then** no section is created and the input shows the error "Section name cannot be empty"
 
 ### AC-3: Create a Section — Duplicate Name Prevented
+
 - **Given** the user already has a section named "LinkedIn"
 - **When** the user attempts to create another section named "linkedin" (different case)
 - **Then** no section is created and the input shows the error "A section with this name already exists"
 
 ### AC-4: Create a Section — Name Too Long
+
 - **Given** the user types a name longer than 100 characters into the section input
 - **When** the user submits the form
 - **Then** no section is created and the input shows the error "Section name must be 100 characters or fewer"
 
 ### AC-5: Sections List — Shows All Sections with Counts
+
 - **Given** the user has created sections with varying numbers of applications
 - **When** the user views the Sections management page
 - **Then** all sections are listed alphabetically, each showing its name and the count of applications assigned to it
 
 ### AC-6: Sections List — Empty State
+
 - **Given** the user has no sections
 - **When** the user views the Sections management page
 - **Then** an empty state message is shown: "No sections yet. Create one above."
 
 ### AC-7: Rename a Section — Happy Path
+
 - **Given** the user is on the Sections management page and clicks the rename control for a section named "LinkedIn"
 - **When** the user changes the name to "LinkedIn Jobs" and confirms
 - **Then** the section record is updated in the database, the new name appears in the list, and all applications previously assigned to this section now reflect the new name when viewed
 
 ### AC-8: Rename a Section — Duplicate Name Prevented
+
 - **Given** the user already has sections named "LinkedIn" and "Indeed"
 - **When** the user renames "LinkedIn" to "Indeed"
 - **Then** the rename is rejected and an error is shown: "A section with this name already exists"
 
 ### AC-9: Rename a Section — Cancel
+
 - **Given** a section is in rename (edit) mode
 - **When** the user presses Escape or clicks "Cancel"
 - **Then** the original name is restored and no database write occurs
 
 ### AC-10: Delete a Section — Confirmation with Application Count
+
 - **Given** the user clicks delete on a section that has 3 applications
 - **When** the confirmation appears
 - **Then** the message reads "Deleting '[Section Name]' will move 3 applications to Unsectioned. Continue?"
 
 ### AC-11: Delete a Section — Confirmation with No Applications
+
 - **Given** the user clicks delete on a section that has 0 applications
 - **When** the confirmation appears
 - **Then** the message reads "Delete '[Section Name]'? This cannot be undone."
 
 ### AC-12: Delete a Section — Confirmed
+
 - **Given** the delete confirmation is visible for a section with applications
 - **When** the user confirms the deletion
 - **Then** the section record is removed from the database, applications that were in it now have `section_id` = null, and those applications appear under "Unsectioned" in the By Section view
 
 ### AC-13: Delete a Section — Cancelled
+
 - **Given** the delete confirmation is visible
 - **When** the user clicks "Cancel"
 - **Then** nothing is deleted and the section remains unchanged in the list
 
 ### AC-14: Section Dropdown in Application Form
+
 - **Given** the user has one or more sections and is on the Add Application or Edit Application form
 - **When** the section dropdown is opened
 - **Then** all of the user's sections are listed alphabetically, plus a blank/empty option representing "No section"
 
 ### AC-15: Unsectioned Applications Remain Accessible
+
 - **Given** a section is deleted and its applications become unsectioned
 - **When** the user views the applications list in "All" mode
 - **Then** the formerly-sectioned applications still appear in the list with no section label

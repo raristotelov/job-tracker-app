@@ -1,6 +1,6 @@
-import type { SectionWithCount } from '@/types';
-import { SectionItem } from './SectionItem';
-import styles from './SectionList.module.scss';
+import type { SectionWithCount } from "@/types";
+import { SectionItem } from "./SectionItem";
+import styles from "./SectionList.module.scss";
 
 interface SectionListProps {
   sections: SectionWithCount[];

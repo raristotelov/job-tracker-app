@@ -1,14 +1,11 @@
-'use server';
+"use server";
 
-import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
-import {
-  applicationCreateSchema,
-  applicationUpdateSchema,
-} from '@/lib/validators/application';
-import { ROUTES } from '@/constants/routes';
-import type { ApplicationCreateInput } from '@/types';
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { createClient } from "@/lib/supabase/server";
+import { applicationCreateSchema, applicationUpdateSchema } from "@/lib/validators/application";
+import { ROUTES } from "@/constants/routes";
+import type { ApplicationCreateInput } from "@/types";
 
 /** Shared return type for actions that can fail without redirecting. */
 export interface ApplicationActionError {
@@ -26,9 +23,7 @@ export interface ApplicationActionError {
  *
  * Returns `ApplicationActionError` on validation or DB failure.
  */
-export async function createApplicationInline(
-  formData: FormData,
-): Promise<{ id: string } | ApplicationActionError> {
+export async function createApplicationInline(formData: FormData): Promise<{ id: string } | ApplicationActionError> {
   const supabase = await createClient();
 
   const {
@@ -36,7 +31,7 @@ export async function createApplicationInline(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'You must be logged in to create an application.' };
+    return { error: "You must be logged in to create an application." };
   }
 
   const raw = extractFormData(formData);
@@ -47,13 +42,13 @@ export async function createApplicationInline(
   }
 
   const { data, error } = await supabase
-    .from('applications')
+    .from("applications")
     .insert({ ...parsed.data, user_id: user.id })
-    .select('id')
+    .select("id")
     .single();
 
   if (error || !data) {
-    return { error: 'Something went wrong. Your changes were not saved. Please try again.' };
+    return { error: "Something went wrong. Your changes were not saved. Please try again." };
   }
 
   revalidatePath(ROUTES.APPLICATIONS);
@@ -72,10 +67,7 @@ export async function createApplicationInline(
  *
  * Returns `ApplicationActionError` on validation or DB failure.
  */
-export async function updateApplicationInline(
-  id: string,
-  formData: FormData,
-): Promise<{ id: string } | ApplicationActionError> {
+export async function updateApplicationInline(id: string, formData: FormData): Promise<{ id: string } | ApplicationActionError> {
   const supabase = await createClient();
 
   const {
@@ -83,7 +75,7 @@ export async function updateApplicationInline(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'You must be logged in to update an application.' };
+    return { error: "You must be logged in to update an application." };
   }
 
   const raw = extractFormData(formData);
@@ -93,14 +85,10 @@ export async function updateApplicationInline(
     return buildValidationError(parsed.error);
   }
 
-  const { error } = await supabase
-    .from('applications')
-    .update(parsed.data)
-    .eq('id', id)
-    .eq('user_id', user.id);
+  const { error } = await supabase.from("applications").update(parsed.data).eq("id", id).eq("user_id", user.id);
 
   if (error) {
-    return { error: 'Something went wrong. Your changes were not saved. Please try again.' };
+    return { error: "Something went wrong. Your changes were not saved. Please try again." };
   }
 
   revalidatePath(ROUTES.APPLICATIONS);
@@ -116,9 +104,7 @@ export async function updateApplicationInline(
  *
  * Returns `{ success: true }` on success, `{ error }` on failure.
  */
-export async function deleteApplication(
-  id: string,
-): Promise<{ success: true } | ApplicationActionError> {
+export async function deleteApplication(id: string): Promise<{ success: true } | ApplicationActionError> {
   const supabase = await createClient();
 
   const {
@@ -126,17 +112,13 @@ export async function deleteApplication(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'You must be logged in to delete an application.' };
+    return { error: "You must be logged in to delete an application." };
   }
 
-  const { error } = await supabase
-    .from('applications')
-    .delete()
-    .eq('id', id)
-    .eq('user_id', user.id);
+  const { error } = await supabase.from("applications").delete().eq("id", id).eq("user_id", user.id);
 
   if (error) {
-    return { error: 'Something went wrong. The application could not be deleted. Please try again.' };
+    return { error: "Something went wrong. The application could not be deleted. Please try again." };
   }
 
   revalidatePath(ROUTES.APPLICATIONS);
@@ -158,29 +140,29 @@ export async function deleteApplication(
 function extractFormData(formData: FormData): Record<string, unknown> {
   const getString = (key: string): string | null => {
     const val = formData.get(key);
-    if (typeof val !== 'string') return null;
+    if (typeof val !== "string") return null;
     const trimmed = val.trim();
     return trimmed.length > 0 ? trimmed : null;
   };
 
   const getNumber = (key: string): number | null => {
     const val = formData.get(key);
-    if (typeof val !== 'string' || val.trim() === '') return null;
+    if (typeof val !== "string" || val.trim() === "") return null;
     const num = Number(val.trim());
     return isNaN(num) ? null : num;
   };
 
   return {
-    company_name:     getString('company_name'),
-    position_title:   getString('position_title'),
-    job_posting_url:  getString('job_posting_url'),
-    location:         getString('location'),
-    work_type:        getString('work_type'),
-    salary_range_min: getNumber('salary_range_min'),
-    salary_range_max: getNumber('salary_range_max'),
-    status:           getString('status') ?? 'applied',
-    date_applied:     getString('date_applied'),
-    section_id:       getString('section_id'),
+    company_name: getString("company_name"),
+    position_title: getString("position_title"),
+    job_posting_url: getString("job_posting_url"),
+    location: getString("location"),
+    work_type: getString("work_type"),
+    salary_range_min: getNumber("salary_range_min"),
+    salary_range_max: getNumber("salary_range_max"),
+    status: getString("status") ?? "applied",
+    date_applied: getString("date_applied"),
+    section_id: getString("section_id"),
   };
 }
 
@@ -199,7 +181,7 @@ function buildValidationError(zodError: z.ZodError): ApplicationActionError {
   }
 
   return {
-    error: 'Please fix the errors below.',
+    error: "Please fix the errors below.",
     fieldErrors,
   };
 }

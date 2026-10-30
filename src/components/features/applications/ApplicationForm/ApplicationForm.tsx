@@ -1,19 +1,16 @@
-'use client';
+"use client";
 
-import { useActionState, useRef, useEffect } from 'react';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
-import { ErrorBanner } from '@/components/ui/ErrorBanner';
-import { APPLICATION_STATUSES, STATUS_LABELS } from '@/constants/status';
-import { WORK_TYPES, WORK_TYPE_LABELS } from '@/constants/workType';
-import {
-  createApplicationInline,
-  updateApplicationInline,
-} from '@/services/applications';
-import type { ApplicationActionError } from '@/services/applications';
-import type { ApplicationWithSection, Section } from '@/types';
-import styles from './ApplicationForm.module.scss';
+import { useActionState, useRef, useEffect } from "react";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Button } from "@/components/ui/Button";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
+import { APPLICATION_STATUSES, STATUS_LABELS } from "@/constants/status";
+import { WORK_TYPES, WORK_TYPE_LABELS } from "@/constants/workType";
+import { createApplicationInline, updateApplicationInline } from "@/services/applications";
+import type { ApplicationActionError } from "@/services/applications";
+import type { ApplicationWithSection, Section } from "@/types";
+import styles from "./ApplicationForm.module.scss";
 
 // =============================================================================
 // TYPES
@@ -60,34 +57,26 @@ const workTypeOptions = WORK_TYPES.map((wt) => ({
  * returned as `fieldErrors` in the action state. We do not duplicate
  * validation rules here — the server is the authority.
  */
-export function ApplicationForm({
-  initialData,
-  sections,
-  onCancel,
-  onSuccess,
-}: ApplicationFormProps) {
+export function ApplicationForm({ initialData, sections, onCancel, onSuccess }: ApplicationFormProps) {
   const isEditMode = initialData !== undefined;
 
-  const [state, formAction, isPending] = useActionState<FormState, FormData>(
-    async (_prev, formData) => {
-      if (isEditMode) {
-        const result = await updateApplicationInline(initialData.id, formData);
-        if ('id' in result) {
-          onSuccess?.(result.id);
-          return null;
-        }
-        return result;
-      }
-
-      const result = await createApplicationInline(formData);
-      if ('id' in result) {
+  const [state, formAction, isPending] = useActionState<FormState, FormData>(async (_prev, formData) => {
+    if (isEditMode) {
+      const result = await updateApplicationInline(initialData.id, formData);
+      if ("id" in result) {
         onSuccess?.(result.id);
         return null;
       }
       return result;
-    },
-    null,
-  );
+    }
+
+    const result = await createApplicationInline(formData);
+    if ("id" in result) {
+      onSuccess?.(result.id);
+      return null;
+    }
+    return result;
+  }, null);
 
   const fieldErrors = state?.fieldErrors ?? {};
 
@@ -102,17 +91,12 @@ export function ApplicationForm({
   }, [state?.fieldErrors]);
 
   // Build section options with an explicit "No section" option at the top.
-  const sectionOptions = [
-    { value: '', label: 'No section' },
-    ...sections.map((s) => ({ value: s.id, label: s.name })),
-  ];
+  const sectionOptions = [{ value: "", label: "No section" }, ...sections.map((s) => ({ value: s.id, label: s.name }))];
 
   return (
     <form ref={formRef} action={formAction} className={styles.form} noValidate>
       {/* Top-level error banner — shown for both field validation failures and server errors */}
-      {state?.error ? (
-        <ErrorBanner message={state.error} />
-      ) : null}
+      {state?.error ? <ErrorBanner message={state.error} /> : null}
 
       <fieldset className={styles.fieldset}>
         <legend className={styles.legend}>Job Details</legend>
@@ -122,7 +106,7 @@ export function ApplicationForm({
             id="company_name"
             name="company_name"
             label="Company Name *"
-            defaultValue={initialData?.company_name ?? ''}
+            defaultValue={initialData?.company_name ?? ""}
             error={fieldErrors.company_name}
             autoComplete="organization"
             autoFocus={!isEditMode}
@@ -134,7 +118,7 @@ export function ApplicationForm({
             id="position_title"
             name="position_title"
             label="Position Title *"
-            defaultValue={initialData?.position_title ?? ''}
+            defaultValue={initialData?.position_title ?? ""}
             error={fieldErrors.position_title}
           />
         </div>
@@ -145,7 +129,7 @@ export function ApplicationForm({
             name="job_posting_url"
             label="Job Posting URL"
             type="url"
-            defaultValue={initialData?.job_posting_url ?? ''}
+            defaultValue={initialData?.job_posting_url ?? ""}
             error={fieldErrors.job_posting_url}
             placeholder="https://example.com/jobs/123"
             autoComplete="url"
@@ -157,7 +141,7 @@ export function ApplicationForm({
             id="location"
             name="location"
             label="Location"
-            defaultValue={initialData?.location ?? ''}
+            defaultValue={initialData?.location ?? ""}
             error={fieldErrors.location}
             placeholder="Austin, TX"
           />
@@ -167,7 +151,7 @@ export function ApplicationForm({
             name="work_type"
             label="Work Type"
             options={workTypeOptions}
-            defaultValue={initialData?.work_type ?? ''}
+            defaultValue={initialData?.work_type ?? ""}
             error={fieldErrors.work_type}
             placeholder="Select work type"
           />
@@ -184,7 +168,7 @@ export function ApplicationForm({
             label="Minimum"
             type="number"
             min={0}
-            defaultValue={initialData?.salary_range_min?.toString() ?? ''}
+            defaultValue={initialData?.salary_range_min?.toString() ?? ""}
             error={fieldErrors.salary_range_min}
             placeholder="e.g. 80000"
           />
@@ -195,7 +179,7 @@ export function ApplicationForm({
             label="Maximum"
             type="number"
             min={0}
-            defaultValue={initialData?.salary_range_max?.toString() ?? ''}
+            defaultValue={initialData?.salary_range_max?.toString() ?? ""}
             error={fieldErrors.salary_range_max}
             placeholder="e.g. 120000"
           />
@@ -211,7 +195,7 @@ export function ApplicationForm({
             name="date_applied"
             label="Date Applied *"
             type="date"
-            defaultValue={initialData?.date_applied ?? ''}
+            defaultValue={initialData?.date_applied ?? ""}
             error={fieldErrors.date_applied}
           />
 
@@ -220,7 +204,7 @@ export function ApplicationForm({
             name="status"
             label="Status *"
             options={statusOptions}
-            defaultValue={initialData?.status ?? 'applied'}
+            defaultValue={initialData?.status ?? "applied"}
             error={fieldErrors.status}
           />
         </div>
@@ -231,22 +215,18 @@ export function ApplicationForm({
             name="section_id"
             label="Section"
             options={sectionOptions}
-            defaultValue={initialData?.section_id ?? ''}
+            defaultValue={initialData?.section_id ?? ""}
             error={fieldErrors.section_id}
           />
         </div>
       </fieldset>
 
       <div className={styles.actions}>
-        <button
-          type="button"
-          className={styles.cancelLink}
-          onClick={onCancel}
-        >
+        <button type="button" className={styles.cancelLink} onClick={onCancel}>
           Cancel
         </button>
         <Button type="submit" isLoading={isPending}>
-          {isEditMode ? 'Save Changes' : 'Add Application'}
+          {isEditMode ? "Save Changes" : "Add Application"}
         </Button>
       </div>
     </form>

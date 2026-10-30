@@ -31,13 +31,13 @@ Without a status, every application looks the same — a name and a company. Sta
 
 There are exactly five valid statuses:
 
-| Value | Display Label | Meaning |
-|---|---|---|
-| `applied` | Applied | Submitted. No response yet. |
-| `interview_scheduled` | Interview Scheduled | An interview has been arranged. |
-| `interview_completed` | Interview Completed | At least one interview round is done. Awaiting next steps. |
-| `offer_received` | Offer Received | A formal offer has been extended. |
-| `rejected` | Rejected | The application is closed — either explicitly rejected, or the user is treating it as dead. |
+| Value                 | Display Label       | Meaning                                                                                     |
+| --------------------- | ------------------- | ------------------------------------------------------------------------------------------- |
+| `applied`             | Applied             | Submitted. No response yet.                                                                 |
+| `interview_scheduled` | Interview Scheduled | An interview has been arranged.                                                             |
+| `interview_completed` | Interview Completed | At least one interview round is done. Awaiting next steps.                                  |
+| `offer_received`      | Offer Received      | A formal offer has been extended.                                                           |
+| `rejected`            | Rejected            | The application is closed — either explicitly rejected, or the user is treating it as dead. |
 
 ---
 
@@ -84,15 +84,11 @@ applied -> interview_scheduled -> interview_completed -> offer_received
 Status is stored in the `status` column on the `applications` table (see [job-applications-crud.md](./job-applications-crud.md)). No separate history table is maintained in v1.
 
 ```typescript
-type ApplicationStatus =
-  | 'applied'
-  | 'interview_scheduled'
-  | 'interview_completed'
-  | 'offer_received'
-  | 'rejected';
+type ApplicationStatus = "applied" | "interview_scheduled" | "interview_completed" | "offer_received" | "rejected";
 ```
 
 The `status` column uses a PostgreSQL `CHECK` constraint:
+
 ```sql
 CHECK (status IN ('applied', 'interview_scheduled', 'interview_completed', 'offer_received', 'rejected'))
 ```
@@ -102,10 +98,7 @@ CHECK (status IN ('applied', 'interview_scheduled', 'interview_completed', 'offe
 Status has a dedicated server action in `src/services/statusActions.ts`:
 
 ```typescript
-export async function updateApplicationStatus(
-  id: string,
-  status: ApplicationStatus,
-): Promise<{ success: true } | { error: string }>
+export async function updateApplicationStatus(id: string, status: ApplicationStatus): Promise<{ success: true } | { error: string }>;
 ```
 
 Validation uses Zod: `statusUpdateSchema.safeParse(status)`. Invalid values return `{ error: 'Invalid status value.' }`. The action authenticates the user, scopes the update to `user_id`, and calls `revalidatePath(ROUTES.APPLICATIONS)` on success.
@@ -117,41 +110,49 @@ The `updated_at` trigger on the `applications` table fires on any update, includ
 ## Acceptance Criteria
 
 ### AC-1: Default Status on Create
+
 - **Given** the user submits the "Add Application" form without selecting a status
 - **When** the record is created
 - **Then** the `status` field is `applied` and the badge displays in gray with the label "Applied"
 
 ### AC-2: Status Selected on Create
+
 - **Given** the user selects "Interview Scheduled" from the status field on the Add Application form
 - **When** the form is submitted
 - **Then** the application is created with `status` = `interview_scheduled`
 
 ### AC-3: Status Badge in List View
+
 - **Given** the user has applications with different statuses
 - **When** the user views the applications list
 - **Then** each row shows a status badge with the correct label and color for that application's status
 
 ### AC-4: Change Status from Detail View — Happy Path
+
 - **Given** the user is on the detail view for an application with status `applied`
 - **When** the user selects `interview_scheduled` from the status selector and clicks "Save Status"
 - **Then** the application's `status` is updated in the database and the badge updates to blue with the label "Interview Scheduled"
 
 ### AC-5: Change Status — Free Transition
+
 - **Given** an application has `rejected` status
 - **When** the user changes the status to `applied` from the detail view and saves
 - **Then** the status is updated without any blocking warning or error
 
 ### AC-6: Change Status — Same Value Disables Save
+
 - **Given** an application has `applied` status
 - **When** the user selects `applied` again from the status selector
 - **Then** the "Save Status" button is disabled, preventing a no-op write
 
 ### AC-7: Invalid Status Value Rejected
+
 - **Given** a status value not in the five defined values is submitted via any form or API call
 - **When** the request is processed
 - **Then** the request fails with a validation error and no database write occurs
 
 ### AC-8: Status Change Updates Timestamp
+
 - **Given** an application has a known `updated_at` value
 - **When** the user changes the status and saves
 - **Then** the `updated_at` timestamp on the record is updated to the current time

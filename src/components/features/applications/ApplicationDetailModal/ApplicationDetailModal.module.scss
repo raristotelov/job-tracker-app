@@ -1,6 +1,6 @@
-@use 'sass:color';
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as *;
+@use "sass:color";
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 // =============================================================================
 // OVERLAY — full-viewport container rendered via portal
@@ -62,7 +62,9 @@
   // Fade + subtle scale animation on open.
   opacity: 0;
   transform: scale(0.96) translateY(8px);
-  transition: opacity 250ms ease, transform 250ms ease;
+  transition:
+    opacity 250ms ease,
+    transform 250ms ease;
 
   &.panelOpen {
     opacity: 1;
@@ -73,7 +75,7 @@
     transition: none;
   }
 
-  @include respond-to('mobile') {
+  @include respond-to("mobile") {
     max-height: 90vh;
   }
 }
@@ -127,7 +129,9 @@
   border-radius: $radius-sm;
   cursor: pointer;
   flex-shrink: 0;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
 
   &:hover {
     color: $color-text-dark;
@@ -186,7 +190,7 @@
   gap: $spacing-md $spacing-xl;
   margin: 0;
 
-  @include respond-to('mobile') {
+  @include respond-to("mobile") {
     grid-template-columns: 1fr;
   }
 }
@@ -232,4 +236,3 @@
   font-size: $font-size-sm;
   color: $color-text-light;
 }
-

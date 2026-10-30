@@ -11,8 +11,8 @@
  * node with non-empty text is found.
  */
 function hasTextContent(node: Record<string, unknown>): boolean {
-  if (node.type === 'text') {
-    return typeof node.text === 'string' && node.text.trim().length > 0;
+  if (node.type === "text") {
+    return typeof node.text === "string" && node.text.trim().length > 0;
   }
 
   const children = node.content;
@@ -46,9 +46,7 @@ export function isNoteEmpty(content: Record<string, unknown>): boolean {
  * @param content - A Tiptap JSONContent document object.
  * @returns A new document with disallowed nodes and marks removed.
  */
-export function sanitizeNoteContent(
-  content: Record<string, unknown>,
-): Record<string, unknown> {
+export function sanitizeNoteContent(content: Record<string, unknown>): Record<string, unknown> {
   // Placeholder — full implementation in T-032.
   return content;
 }

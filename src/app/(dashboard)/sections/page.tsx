@@ -1,10 +1,10 @@
-import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { CreateSectionForm } from '@/components/features/sections/CreateSectionForm';
-import { SectionList } from '@/components/features/sections/SectionList';
-import { ROUTES } from '@/constants/routes';
-import type { SectionWithCount } from '@/types';
-import styles from './page.module.scss';
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { CreateSectionForm } from "@/components/features/sections/CreateSectionForm";
+import { SectionList } from "@/components/features/sections/SectionList";
+import { ROUTES } from "@/constants/routes";
+import type { SectionWithCount } from "@/types";
+import styles from "./page.module.scss";
 
 /**
  * Sections management page — Server Component.
@@ -27,14 +27,10 @@ export default async function SectionsPage() {
     redirect(ROUTES.LOGIN);
   }
 
-  const { data, error } = await supabase
-    .from('sections')
-    .select('*, applications(count)')
-    .eq('user_id', user.id)
-    .order('name', { ascending: true });
+  const { data, error } = await supabase.from("sections").select("*, applications(count)").eq("user_id", user.id).order("name", { ascending: true });
 
   if (error) {
-    throw new Error('Failed to load sections. Please refresh the page.');
+    throw new Error("Failed to load sections. Please refresh the page.");
   }
 
   // Supabase returns applications as [{ count: number }] for embedded counts.
@@ -44,9 +40,7 @@ export default async function SectionsPage() {
     name: row.name,
     created_at: row.created_at,
     updated_at: row.updated_at,
-    application_count: Array.isArray(row.applications) && row.applications.length > 0
-      ? (row.applications[0] as { count: number }).count
-      : 0,
+    application_count: Array.isArray(row.applications) && row.applications.length > 0 ? (row.applications[0] as { count: number }).count : 0,
   }));
 
   return (
@@ -61,17 +55,9 @@ export default async function SectionsPage() {
       </div>
 
       <div className={styles.listSection}>
-        <p className={styles.listTitle}>
-          Your Sections {sections.length > 0 ? `(${sections.length})` : ''}
-        </p>
+        <p className={styles.listTitle}>Your Sections {sections.length > 0 ? `(${sections.length})` : ""}</p>
 
-        {sections.length === 0 ? (
-          <p className={styles.emptyMessage}>
-            No sections yet. Create one above.
-          </p>
-        ) : (
-          <SectionList sections={sections} />
-        )}
+        {sections.length === 0 ? <p className={styles.emptyMessage}>No sections yet. Create one above.</p> : <SectionList sections={sections} />}
       </div>
     </div>
   );

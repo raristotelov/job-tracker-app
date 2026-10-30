@@ -1,13 +1,8 @@
 /** Valid work arrangement types */
-export type WorkType = 'remote' | 'hybrid' | 'on_site';
+export type WorkType = "remote" | "hybrid" | "on_site";
 
 /** Valid application pipeline statuses */
-export type ApplicationStatus =
-  | 'applied'
-  | 'interview_scheduled'
-  | 'interview_completed'
-  | 'offer_received'
-  | 'rejected';
+export type ApplicationStatus = "applied" | "interview_scheduled" | "interview_completed" | "offer_received" | "rejected";
 
 /** Database row shape for the applications table */
 export interface Application {
@@ -23,8 +18,8 @@ export interface Application {
   salary_range_max: number | null;
   status: ApplicationStatus;
   date_applied: string; // ISO 8601 date string (YYYY-MM-DD)
-  created_at: string;   // ISO 8601 timestamptz
-  updated_at: string;   // ISO 8601 timestamptz
+  created_at: string; // ISO 8601 timestamptz
+  updated_at: string; // ISO 8601 timestamptz
 }
 
 /** Application with its section name joined. Used in list and detail views. */

@@ -73,12 +73,14 @@ Every time the user wants to review an application's details, they are navigated
 **Location**: `src/components/features/applications/ApplicationDetailModal/`
 
 Files:
+
 - `ApplicationDetailModal.tsx` — Component implementation
 - `ApplicationDetailModal.module.scss` — Modal-specific layout styles
 - `ApplicationDetailModal.test.tsx` — Unit tests
 - `index.ts` — Barrel export
 
 Props:
+
 ```typescript
 interface ApplicationDetailModalProps {
   application: ApplicationWithSection | null;
@@ -89,6 +91,7 @@ interface ApplicationDetailModalProps {
 ```
 
 Responsibilities:
+
 - Renders via `createPortal` to `document.body`
 - Manages body scroll lock while open
 - Closes on Escape keydown
@@ -111,6 +114,7 @@ The `SideDrawer` component already implements portal rendering, body scroll lock
 **File**: `src/components/features/applications/ApplicationList/ApplicationTable/ApplicationTable.tsx`
 
 Changes:
+
 - Add `onRowClick: (application: ApplicationWithSection) => void` prop to `ApplicationTableProps`.
 - Each `<tr>` element receives `onClick={() => onRowClick(app)}`, `style={{ cursor: 'pointer' }}` (or a SASS module class), `tabIndex={0}`, and an `onKeyDown` handler that calls `onRowClick(app)` when Enter or Space is pressed — making the row keyboard-accessible as a clickable element.
 - Add `role="button"` or `role="link"` to each `<tr>` so screen readers announce the row's purpose. Use `aria-label={`View details for ${app.position_title} at ${app.company_name}`}` on each `<tr>`.
@@ -121,6 +125,7 @@ Changes:
 **File**: `src/components/features/applications/ApplicationList/ApplicationList.tsx`
 
 Changes:
+
 - Add `selectedApplication: ApplicationWithSection | null` state (default `null`).
 - Add `isDetailOpen: boolean` state (default `false`).
 - Add `openDetail(app: ApplicationWithSection)` handler: sets `selectedApplication = app` and `isDetailOpen = true`.
@@ -135,71 +140,85 @@ Changes:
 ## Acceptance Criteria
 
 ### AC-1: Row Click Opens Popup
+
 - **Given** the user is on the applications list page with at least one application
 - **When** the user clicks anywhere on an application row
 - **Then** the detail popup opens over the list, the backdrop appears, and no page navigation occurs
 
 ### AC-2: Popup Displays All Application Fields
+
 - **Given** the popup is open for a specific application
 - **When** the user inspects the popup content
 - **Then** all of the following are visible: Position Title, Company Name, Status (as a badge), Section, Location, Work Type, Salary Range, Date Applied, Job Posting URL, and Created / Updated timestamps. Optional fields with no value display "—".
 
 ### AC-3: Popup Displays Correct Data
+
 - **Given** the user clicks a specific row
 - **When** the popup opens
 - **Then** every field in the popup matches the data of the application in that row — not any other application
 
 ### AC-4: Status Change from Popup
+
 - **Given** the popup is open for an application with status "Applied"
 - **When** the user selects "Interview Scheduled" from the StatusSelector and clicks "Save Status"
 - **Then** the status is updated in the database, the StatusBadge in the popup and list row updates to reflect the new status, and no page navigation occurs
 
 ### AC-5: Close Button Dismisses Popup
+
 - **Given** the popup is open
 - **When** the user clicks the X close button in the popup header
 - **Then** the popup closes and the list is visible; no navigation occurs
 
 ### AC-6: Escape Key Dismisses Popup
+
 - **Given** the popup is open
 - **When** the user presses the Escape key
 - **Then** the popup closes
 
 ### AC-7: Backdrop Click Dismisses Popup
+
 - **Given** the popup is open
 - **When** the user clicks on the backdrop area outside the popup panel
 - **Then** the popup closes
 
 ### AC-8: Body Scroll Locked While Popup Open
+
 - **Given** the applications list is long enough to scroll
 - **When** the popup is open
 - **Then** the page body does not scroll behind the backdrop
 
 ### AC-9: Popup is Accessible
+
 - **Given** the popup is open
 - **When** a screen reader user interacts with the page
 - **Then** the popup has `role="dialog"`, `aria-modal="true"`, and its title element is referenced by `aria-labelledby`; focus is trapped within the popup and does not reach the content behind the backdrop
 
 ### AC-10: Keyboard-Accessible Rows
+
 - **Given** the user is navigating the list with a keyboard
 - **When** the user tabs to an application row and presses Enter or Space
 - **Then** the detail popup opens for that application
 
 ### AC-11: Opening a Second Row Replaces Popup Content
+
 - **Given** the popup is open showing Application A
 - **When** the user closes the popup and clicks a different row (Application B)
 - **Then** the popup opens and displays Application B's data
 
 ### AC-12: Popup Content Scrollable When Tall
+
 - **Given** the popup is open for an application with data in all fields
 - **When** the popup content exceeds 80vh
 - **Then** the popup panel does not grow beyond 80vh; the content area scrolls internally while the header remains fixed
 
 ### AC-13: Fallback Detail Page Unaffected
+
 - **Given** the user navigates directly to `/applications/[id]`
 - **When** the page loads
 - **Then** the full detail page displays correctly — the popup feature has no effect on this route
 
 ### AC-14: By Section View Rows Are Also Clickable
+
 - **Given** the user has switched to the "By Section" view
 - **When** the user clicks a row in any section group
 - **Then** the detail popup opens for that application

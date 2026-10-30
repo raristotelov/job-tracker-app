@@ -1,5 +1,5 @@
-@use 'sass:color';
-@use '@/styles/variables' as *;
+@use "sass:color";
+@use "@/styles/variables" as *;
 
 // =============================================================================
 // INPUT WRAPPER
@@ -37,7 +37,9 @@
   background-color: $color-bg-surface;
   border: 1px solid $color-border;
   border-radius: $radius-md;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
   appearance: none;
 
   &::placeholder {

@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import styles from './layout.module.scss';
+import { ReactNode } from "react";
+import styles from "./layout.module.scss";
 
 interface AuthLayoutProps {
   children: ReactNode;

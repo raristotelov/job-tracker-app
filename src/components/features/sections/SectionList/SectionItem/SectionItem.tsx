@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useTransition, useRef, useEffect, useCallback } from 'react';
-import { Button } from '@/components/ui/Button';
-import { ErrorBanner } from '@/components/ui/ErrorBanner';
-import { renameSection, deleteSection } from '@/services/sections';
-import type { SectionWithCount } from '@/types';
-import styles from './SectionItem.module.scss';
+import { useState, useTransition, useRef, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/Button";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
+import { renameSection, deleteSection } from "@/services/sections";
+import type { SectionWithCount } from "@/types";
+import styles from "./SectionItem.module.scss";
 
 interface SectionItemProps {
   section: SectionWithCount;
 }
 
-type Mode = 'view' | 'rename' | 'delete';
+type Mode = "view" | "rename" | "delete";
 
 /**
  * A single row in the sections management list.
@@ -25,7 +25,7 @@ type Mode = 'view' | 'rename' | 'delete';
  *   applications). Confirmed with "Delete", cancelled with "Cancel".
  */
 export function SectionItem({ section }: SectionItemProps) {
-  const [mode, setMode] = useState<Mode>('view');
+  const [mode, setMode] = useState<Mode>("view");
   const [error, setError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -39,7 +39,7 @@ export function SectionItem({ section }: SectionItemProps) {
 
   // Focus the rename input when entering rename mode.
   useEffect(() => {
-    if (mode === 'rename') {
+    if (mode === "rename") {
       renameInputRef.current?.focus();
       renameInputRef.current?.select();
     }
@@ -47,20 +47,20 @@ export function SectionItem({ section }: SectionItemProps) {
 
   // Focus the delete confirmation region when entering delete mode.
   useEffect(() => {
-    if (mode === 'delete') {
+    if (mode === "delete") {
       deleteConfirmRef.current?.focus();
     }
   }, [mode]);
 
   const cancelRename = useCallback(() => {
-    setMode('view');
+    setMode("view");
     setError(null);
     setFieldError(null);
     setOptimisticName(null);
   }, []);
 
   const cancelDelete = useCallback(() => {
-    setMode('view');
+    setMode("view");
     setError(null);
   }, []);
 
@@ -69,14 +69,14 @@ export function SectionItem({ section }: SectionItemProps) {
   // ============================================================
 
   const handleRenameSubmit = () => {
-    const newName = renameInputRef.current?.value.trim() ?? '';
+    const newName = renameInputRef.current?.value.trim() ?? "";
 
-    if (newName === '') {
-      setFieldError('Section name cannot be empty');
+    if (newName === "") {
+      setFieldError("Section name cannot be empty");
       return;
     }
     if (newName.length > 100) {
-      setFieldError('Section name must be 100 characters or fewer');
+      setFieldError("Section name must be 100 characters or fewer");
       return;
     }
 
@@ -84,11 +84,11 @@ export function SectionItem({ section }: SectionItemProps) {
     setError(null);
 
     const formData = new FormData();
-    formData.set('name', newName);
+    formData.set("name", newName);
 
     // Apply optimistic update and switch back to view mode immediately.
     setOptimisticName(newName);
-    setMode('view');
+    setMode("view");
 
     startTransition(async () => {
       const result = await renameSection(section.id, formData);
@@ -97,16 +97,16 @@ export function SectionItem({ section }: SectionItemProps) {
         setOptimisticName(null);
         setFieldError(result.fieldErrors?.name ?? null);
         setError(result.fieldErrors ? null : result.error);
-        setMode('rename');
+        setMode("rename");
       }
     });
   };
 
   const handleRenameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleRenameSubmit();
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       cancelRename();
     }
   };
@@ -130,7 +130,7 @@ export function SectionItem({ section }: SectionItemProps) {
 
   const deleteMessage =
     count > 0
-      ? `Deleting "${displayName}" will move ${count} ${count === 1 ? 'application' : 'applications'} to Unsectioned. Continue?`
+      ? `Deleting "${displayName}" will move ${count} ${count === 1 ? "application" : "applications"} to Unsectioned. Continue?`
       : `Delete "${displayName}"? This cannot be undone.`;
 
   // ============================================================
@@ -140,7 +140,7 @@ export function SectionItem({ section }: SectionItemProps) {
   return (
     <li className={styles.item}>
       {/* ── Rename mode ── */}
-      {mode === 'rename' ? (
+      {mode === "rename" ? (
         <div className={styles.renameRow}>
           <div className={styles.renameInputWrapper}>
             <input
@@ -148,7 +148,7 @@ export function SectionItem({ section }: SectionItemProps) {
               type="text"
               defaultValue={section.name}
               maxLength={100}
-              className={`${styles.renameInput} ${fieldError ? styles.renameInputError : ''}`}
+              className={`${styles.renameInput} ${fieldError ? styles.renameInputError : ""}`}
               aria-label="Section name"
               aria-invalid={fieldError ? true : undefined}
               aria-describedby={fieldError ? `rename-error-${section.id}` : undefined}
@@ -156,31 +156,17 @@ export function SectionItem({ section }: SectionItemProps) {
               disabled={isPending}
             />
             {fieldError ? (
-              <span
-                id={`rename-error-${section.id}`}
-                className={styles.fieldError}
-                role="alert"
-              >
+              <span id={`rename-error-${section.id}`} className={styles.fieldError} role="alert">
                 {fieldError}
               </span>
             ) : null}
           </div>
 
           <div className={styles.renameActions}>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleRenameSubmit}
-              isLoading={isPending}
-            >
+            <Button variant="primary" size="sm" onClick={handleRenameSubmit} isLoading={isPending}>
               Save
             </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={cancelRename}
-              disabled={isPending}
-            >
+            <Button variant="secondary" size="sm" onClick={cancelRename} disabled={isPending}>
               Cancel
             </Button>
           </div>
@@ -191,7 +177,7 @@ export function SectionItem({ section }: SectionItemProps) {
           <div className={styles.nameWrapper}>
             <span className={styles.name}>{displayName}</span>
             <span className={styles.count}>
-              {count} {count === 1 ? 'application' : 'applications'}
+              {count} {count === 1 ? "application" : "applications"}
             </span>
           </div>
 
@@ -200,7 +186,7 @@ export function SectionItem({ section }: SectionItemProps) {
               variant="secondary"
               size="sm"
               onClick={() => {
-                setMode('rename');
+                setMode("rename");
                 setError(null);
                 setFieldError(null);
               }}
@@ -212,7 +198,7 @@ export function SectionItem({ section }: SectionItemProps) {
               variant="destructive"
               size="sm"
               onClick={() => {
-                setMode('delete');
+                setMode("delete");
                 setError(null);
               }}
               disabled={isPending}
@@ -224,32 +210,17 @@ export function SectionItem({ section }: SectionItemProps) {
       )}
 
       {/* ── Delete confirmation (shown below the view row) ── */}
-      {mode === 'delete' ? (
-        <div
-          ref={deleteConfirmRef}
-          className={styles.deleteConfirm}
-          role="alert"
-          tabIndex={-1}
-        >
+      {mode === "delete" ? (
+        <div ref={deleteConfirmRef} className={styles.deleteConfirm} role="alert" tabIndex={-1}>
           {error ? <ErrorBanner message={error} /> : null}
 
           <p className={styles.deleteMessage}>{deleteMessage}</p>
 
           <div className={styles.deleteActions}>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={cancelDelete}
-              disabled={isPending}
-            >
+            <Button variant="secondary" size="sm" onClick={cancelDelete} disabled={isPending}>
               Cancel
             </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleDeleteConfirm}
-              isLoading={isPending}
-            >
+            <Button variant="destructive" size="sm" onClick={handleDeleteConfirm} isLoading={isPending}>
               Delete
             </Button>
           </div>
@@ -257,9 +228,7 @@ export function SectionItem({ section }: SectionItemProps) {
       ) : null}
 
       {/* Top-level error banner for rename network failures */}
-      {mode !== 'rename' && error && mode !== 'delete' ? (
-        <ErrorBanner message={error} />
-      ) : null}
+      {mode !== "rename" && error && mode !== "delete" ? <ErrorBanner message={error} /> : null}
     </li>
   );
 }

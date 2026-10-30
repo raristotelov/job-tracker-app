@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
-import { ErrorBanner } from '@/components/ui/ErrorBanner';
-import { APPLICATION_STATUSES, STATUS_LABELS } from '@/constants/status';
-import { updateApplicationStatus } from '@/services/statusActions';
-import type { ApplicationStatus } from '@/types';
-import styles from './StatusSelector.module.scss';
+import { useState } from "react";
+import { Select } from "@/components/ui/Select";
+import { Button } from "@/components/ui/Button";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
+import { APPLICATION_STATUSES, STATUS_LABELS } from "@/constants/status";
+import { updateApplicationStatus } from "@/services/statusActions";
+import type { ApplicationStatus } from "@/types";
+import styles from "./StatusSelector.module.scss";
 
 interface StatusSelectorProps {
   applicationId: string;
@@ -20,11 +20,7 @@ const STATUS_OPTIONS = APPLICATION_STATUSES.map((s) => ({
   label: STATUS_LABELS[s],
 }));
 
-export function StatusSelector({
-  applicationId,
-  currentStatus,
-  onStatusChange,
-}: StatusSelectorProps) {
+export function StatusSelector({ applicationId, currentStatus, onStatusChange }: StatusSelectorProps) {
   const [selected, setSelected] = useState<ApplicationStatus>(currentStatus);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +35,7 @@ export function StatusSelector({
 
     setIsLoading(false);
 
-    if ('error' in result) {
+    if ("error" in result) {
       setSelected(currentStatus);
       setError(result.error);
       return;
@@ -64,19 +60,11 @@ export function StatusSelector({
           }}
           disabled={isLoading}
         />
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={handleSave}
-          disabled={isSameStatus || isLoading}
-          isLoading={isLoading}
-        >
+        <Button variant="secondary" size="sm" onClick={handleSave} disabled={isSameStatus || isLoading} isLoading={isLoading}>
           Save Status
         </Button>
       </div>
-      {error ? (
-        <ErrorBanner message={error} onDismiss={() => setError(null)} />
-      ) : null}
+      {error ? <ErrorBanner message={error} onDismiss={() => setError(null)} /> : null}
     </div>
   );
 }

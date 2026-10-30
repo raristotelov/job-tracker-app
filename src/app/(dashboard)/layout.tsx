@@ -1,10 +1,10 @@
-import { ReactNode } from 'react';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { ROUTES } from '@/constants/routes';
-import { SidebarNav } from './SidebarNav';
-import styles from './layout.module.scss';
+import { ReactNode } from "react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { ROUTES } from "@/constants/routes";
+import { SidebarNav } from "./SidebarNav";
+import styles from "./layout.module.scss";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -28,7 +28,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
     redirect(ROUTES.LOGIN);
   }
 
-  const userEmail = user.email ?? '';
+  const userEmail = user.email ?? "";
 
   return (
     <div className={styles.root}>

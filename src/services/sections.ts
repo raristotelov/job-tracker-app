@@ -1,10 +1,10 @@
-'use server';
+"use server";
 
-import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
-import { sectionNameSchema } from '@/lib/validators/section';
-import { ROUTES } from '@/constants/routes';
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { createClient } from "@/lib/supabase/server";
+import { sectionNameSchema } from "@/lib/validators/section";
+import { ROUTES } from "@/constants/routes";
 
 /** Shared return type for section actions that can fail without redirecting. */
 export interface SectionActionError {
@@ -13,7 +13,7 @@ export interface SectionActionError {
 }
 
 // Supabase Postgres error code for unique constraint violations.
-const UNIQUE_VIOLATION_CODE = '23505';
+const UNIQUE_VIOLATION_CODE = "23505";
 
 /**
  * Creates a new section for the authenticated user.
@@ -25,9 +25,7 @@ const UNIQUE_VIOLATION_CODE = '23505';
  * Returns `{ error, fieldErrors? }` on validation or DB failure so the
  * form can surface the message without a page reload.
  */
-export async function createSection(
-  formData: FormData,
-): Promise<SectionActionError | null> {
+export async function createSection(formData: FormData): Promise<SectionActionError | null> {
   const supabase = await createClient();
 
   const {
@@ -35,28 +33,26 @@ export async function createSection(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'You must be logged in to create a section.' };
+    return { error: "You must be logged in to create a section." };
   }
 
-  const raw = { name: formData.get('name') };
+  const raw = { name: formData.get("name") };
   const parsed = sectionNameSchema.safeParse(raw);
 
   if (!parsed.success) {
     return buildValidationError(parsed.error);
   }
 
-  const { error } = await supabase
-    .from('sections')
-    .insert({ user_id: user.id, name: parsed.data.name });
+  const { error } = await supabase.from("sections").insert({ user_id: user.id, name: parsed.data.name });
 
   if (error) {
     if (error.code === UNIQUE_VIOLATION_CODE) {
       return {
-        error: 'Please fix the errors below.',
-        fieldErrors: { name: 'A section with this name already exists' },
+        error: "Please fix the errors below.",
+        fieldErrors: { name: "A section with this name already exists" },
       };
     }
-    return { error: 'Failed to create section. Please try again.' };
+    return { error: "Failed to create section. Please try again." };
   }
 
   revalidatePath(ROUTES.SECTIONS);
@@ -72,10 +68,7 @@ export async function createSection(
  *
  * Returns `{ error, fieldErrors? }` on validation or DB failure.
  */
-export async function renameSection(
-  id: string,
-  formData: FormData,
-): Promise<SectionActionError | null> {
+export async function renameSection(id: string, formData: FormData): Promise<SectionActionError | null> {
   const supabase = await createClient();
 
   const {
@@ -83,30 +76,26 @@ export async function renameSection(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'You must be logged in to rename a section.' };
+    return { error: "You must be logged in to rename a section." };
   }
 
-  const raw = { name: formData.get('name') };
+  const raw = { name: formData.get("name") };
   const parsed = sectionNameSchema.safeParse(raw);
 
   if (!parsed.success) {
     return buildValidationError(parsed.error);
   }
 
-  const { error } = await supabase
-    .from('sections')
-    .update({ name: parsed.data.name })
-    .eq('id', id)
-    .eq('user_id', user.id);
+  const { error } = await supabase.from("sections").update({ name: parsed.data.name }).eq("id", id).eq("user_id", user.id);
 
   if (error) {
     if (error.code === UNIQUE_VIOLATION_CODE) {
       return {
-        error: 'Please fix the errors below.',
-        fieldErrors: { name: 'A section with this name already exists' },
+        error: "Please fix the errors below.",
+        fieldErrors: { name: "A section with this name already exists" },
       };
     }
-    return { error: 'Failed to rename section. Please try again.' };
+    return { error: "Failed to rename section. Please try again." };
   }
 
   revalidatePath(ROUTES.SECTIONS);
@@ -123,9 +112,7 @@ export async function renameSection(
  *
  * Returns `{ error }` on failure so the caller can surface the message.
  */
-export async function deleteSection(
-  id: string,
-): Promise<SectionActionError | null> {
+export async function deleteSection(id: string): Promise<SectionActionError | null> {
   const supabase = await createClient();
 
   const {
@@ -133,17 +120,13 @@ export async function deleteSection(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'You must be logged in to delete a section.' };
+    return { error: "You must be logged in to delete a section." };
   }
 
-  const { error } = await supabase
-    .from('sections')
-    .delete()
-    .eq('id', id)
-    .eq('user_id', user.id);
+  const { error } = await supabase.from("sections").delete().eq("id", id).eq("user_id", user.id);
 
   if (error) {
-    return { error: 'Failed to delete section. Please try again.' };
+    return { error: "Failed to delete section. Please try again." };
   }
 
   revalidatePath(ROUTES.SECTIONS);
@@ -164,13 +147,13 @@ function buildValidationError(zodError: z.ZodError): SectionActionError {
 
   for (const issue of zodError.issues) {
     const key = issue.path[0];
-    if (key === 'name' && !fieldErrors.name) {
+    if (key === "name" && !fieldErrors.name) {
       fieldErrors.name = issue.message;
     }
   }
 
   return {
-    error: 'Please fix the errors below.',
+    error: "Please fix the errors below.",
     fieldErrors,
   };
 }

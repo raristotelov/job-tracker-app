@@ -1,27 +1,28 @@
-'use client';
+"use client";
 
-import { useEffect, useId, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { StatusSelector } from '@/components/features/applications/StatusSelector';
-import { formatDate } from '@/lib/utils/formatDate';
-import { formatSalary } from '@/lib/utils/formatSalary';
-import { WORK_TYPE_LABELS } from '@/constants/workType';
-import type { ApplicationWithSection, ApplicationStatus } from '@/types';
-import styles from './ApplicationDetailModal.module.scss';
+import { useEffect, useId, useRef } from "react";
+import { createPortal } from "react-dom";
+import { useHasMounted } from "@/lib/hooks/useHasMounted";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { StatusSelector } from "@/components/features/applications/StatusSelector";
+import { formatDate } from "@/lib/utils/formatDate";
+import { formatSalary } from "@/lib/utils/formatSalary";
+import { WORK_TYPE_LABELS } from "@/constants/workType";
+import type { ApplicationWithSection, ApplicationStatus } from "@/types";
+import styles from "./ApplicationDetailModal.module.scss";
 
 // =============================================================================
 // FOCUS TRAP HELPERS (same pattern as SideDrawer)
 // =============================================================================
 
 const FOCUSABLE_SELECTORS = [
-  'a[href]',
-  'button:not([disabled])',
-  'input:not([disabled])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
   '[tabindex]:not([tabindex="-1"])',
-].join(', ');
+].join(", ");
 
 function getFocusableElements(container: HTMLElement): HTMLElement[] {
   return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS));
@@ -38,7 +39,7 @@ interface ApplicationDetailModalProps {
   onStatusChange: (newStatus: ApplicationStatus) => void;
 }
 
-const PLACEHOLDER = '—';
+const PLACEHOLDER = "—";
 
 /**
  * Centered modal popup that displays all fields of a single application.
@@ -49,28 +50,18 @@ const PLACEHOLDER = '—';
  *
  * Returns null when application is null — safe to render unconditionally.
  */
-export function ApplicationDetailModal({
-  application,
-  isOpen,
-  onClose,
-  onStatusChange,
-}: ApplicationDetailModalProps) {
-  const [hasMounted, setHasMounted] = useState(false);
+export function ApplicationDetailModal({ application, isOpen, onClose, onStatusChange }: ApplicationDetailModalProps) {
+  const hasMounted = useHasMounted();
   const panelRef = useRef<HTMLDivElement>(null);
   const generatedId = useId();
   const titleId = `modal-title-${generatedId}`;
   const wasOpenRef = useRef(false);
 
-  // Avoid SSR mismatch — only render the portal after mount.
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
   // Lock body scroll while the modal is open.
   useEffect(() => {
     if (!isOpen) return;
     const previous = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previous;
     };
@@ -81,12 +72,12 @@ export function ApplicationDetailModal({
     if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         onClose();
         return;
       }
 
-      if (event.key === 'Tab' && panelRef.current) {
+      if (event.key === "Tab" && panelRef.current) {
         const focusable = getFocusableElements(panelRef.current);
         if (focusable.length === 0) {
           event.preventDefault();
@@ -110,9 +101,9 @@ export function ApplicationDetailModal({
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
 
@@ -149,37 +140,21 @@ export function ApplicationDetailModal({
   } = application;
 
   const modal = (
-    <div
-      className={`${styles.overlay} ${isOpen ? styles.overlayVisible : ''}`}
-      aria-hidden={!isOpen}
-    >
+    <div className={`${styles.overlay} ${isOpen ? styles.overlayVisible : ""}`} aria-hidden={!isOpen}>
       {/* Backdrop — click to close */}
-      <div
-        className={styles.backdrop}
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      <div className={styles.backdrop} onClick={onClose} aria-hidden="true" />
 
       {/* Modal panel */}
-      <div
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        className={`${styles.panel} ${isOpen ? styles.panelOpen : ''}`}
-      >
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} className={`${styles.panel} ${isOpen ? styles.panelOpen : ""}`}>
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.headerContent}>
-            <h2 id={titleId} className={styles.title}>{position_title}</h2>
+            <h2 id={titleId} className={styles.title}>
+              {position_title}
+            </h2>
             <p className={styles.company}>{company_name}</p>
           </div>
-          <button
-            type="button"
-            className={styles.closeButton}
-            onClick={onClose}
-            aria-label="Close"
-          >
+          <button type="button" className={styles.closeButton} onClick={onClose} aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -190,11 +165,7 @@ export function ApplicationDetailModal({
           <section className={styles.section}>
             <h3 className={styles.sectionTitle}>Status</h3>
             <StatusBadge status={status} />
-            <StatusSelector
-              applicationId={application.id}
-              currentStatus={status}
-              onStatusChange={onStatusChange}
-            />
+            <StatusSelector applicationId={application.id} currentStatus={status} onStatusChange={onStatusChange} />
           </section>
 
           {/* Job Details */}
@@ -213,16 +184,12 @@ export function ApplicationDetailModal({
 
               <div className={styles.field}>
                 <dt className={styles.fieldLabel}>Work Type</dt>
-                <dd className={styles.fieldValue}>
-                  {work_type ? WORK_TYPE_LABELS[work_type] : PLACEHOLDER}
-                </dd>
+                <dd className={styles.fieldValue}>{work_type ? WORK_TYPE_LABELS[work_type] : PLACEHOLDER}</dd>
               </div>
 
               <div className={styles.field}>
                 <dt className={styles.fieldLabel}>Salary Range</dt>
-                <dd className={styles.fieldValue}>
-                  {formatSalary(salary_range_min, salary_range_max)}
-                </dd>
+                <dd className={styles.fieldValue}>{formatSalary(salary_range_min, salary_range_max)}</dd>
               </div>
 
               <div className={styles.field}>
@@ -234,12 +201,7 @@ export function ApplicationDetailModal({
                 <dt className={styles.fieldLabel}>Job Posting URL</dt>
                 <dd className={styles.fieldValue}>
                   {job_posting_url ? (
-                    <a
-                      href={job_posting_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.link}
-                    >
+                    <a href={job_posting_url} target="_blank" rel="noopener noreferrer" className={styles.link}>
                       {job_posting_url}
                     </a>
                   ) : (
@@ -253,11 +215,8 @@ export function ApplicationDetailModal({
           {/* Timestamps */}
           <footer className={styles.timestamps}>
             <span>Created {formatDate(created_at)}</span>
-            {new Date(updated_at).getTime() !== new Date(created_at).getTime() ? (
-              <span> · Updated {formatDate(updated_at)}</span>
-            ) : null}
+            {new Date(updated_at).getTime() !== new Date(created_at).getTime() ? <span> · Updated {formatDate(updated_at)}</span> : null}
           </footer>
-
         </div>
       </div>
     </div>

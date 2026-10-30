@@ -81,24 +81,16 @@ An inline drawer eliminates those transitions for both flows. The user stays on 
 
 - Sections are fetched server-side in `ApplicationsPage`:
   ```typescript
-  const { data: sectionsData } = await supabase
-    .from('sections')
-    .select('id, name')
-    .order('name', { ascending: true });
+  const { data: sectionsData } = await supabase.from("sections").select("id, name").order("name", { ascending: true });
   const sections = (sectionsData ?? []) as Section[];
   ```
 - `createApplicationInline` signature:
   ```typescript
-  export async function createApplicationInline(
-    formData: FormData,
-  ): Promise<{ id: string } | ApplicationActionError>
+  export async function createApplicationInline(formData: FormData): Promise<{ id: string } | ApplicationActionError>;
   ```
 - `updateApplicationInline` signature:
   ```typescript
-  export async function updateApplicationInline(
-    id: string,
-    formData: FormData,
-  ): Promise<{ id: string } | ApplicationActionError>
+  export async function updateApplicationInline(id: string, formData: FormData): Promise<{ id: string } | ApplicationActionError>;
   ```
 - `ApplicationList` receives a `sections` prop (already in place) and passes both `applications` and `sections` down to `ApplicationTable` via updated props:
   ```typescript
@@ -129,12 +121,14 @@ An inline drawer eliminates those transitions for both flows. The user stays on 
 **Location**: `src/components/ui/SideDrawer/`
 
 Files:
+
 - `SideDrawer.tsx` — Component implementation
 - `SideDrawer.module.scss` — Styles, animation, responsive breakpoints
 - `SideDrawer.test.tsx` — Unit tests
 - `index.ts` — Barrel export
 
 Props:
+
 ```typescript
 interface SideDrawerProps {
   isOpen: boolean;
@@ -145,6 +139,7 @@ interface SideDrawerProps {
 ```
 
 Responsibilities:
+
 - Renders via `createPortal` to `document.body`
 - Manages body scroll lock (`overflow: hidden` on `<body>`) while open
 - Traps focus within the panel while open
@@ -159,12 +154,14 @@ Responsibilities:
 **Location**: `src/components/features/applications/ApplicationDrawer/`
 
 Files:
+
 - `ApplicationDrawer.tsx` — Composes `SideDrawer` and `ApplicationForm`
 - `ApplicationDrawer.module.scss` — Drawer content layout (header, scrollable body, padding)
 - `ApplicationDrawer.test.tsx` — Unit tests
 - `index.ts` — Barrel export
 
 Props:
+
 ```typescript
 interface ApplicationDrawerProps {
   isOpen: boolean;
@@ -176,6 +173,7 @@ interface ApplicationDrawerProps {
 ```
 
 Responsibilities:
+
 - Derives the drawer title: `"Edit Application"` when `editTarget` is defined, `"Add Application"` otherwise
 - Passes `isOpen`, `onClose`, and derived title to `SideDrawer`
 - Passes `sections` and (when editing) `initialData={editTarget}` to `ApplicationForm`
@@ -192,6 +190,7 @@ Responsibilities:
 The form already supports `onSuccess` and `onCancel` callback props and uses a discriminated union (`CancelProps`) to enforce that `cancelHref` is required only when `onCancel` is absent. The action-selection logic already handles create modes. The edit path needs to gain inline support.
 
 Additional changes for edit mode:
+
 - Extend the action-selection logic to cover inline edit:
   ```
   if isEditMode and onSuccess defined   -> updateApplicationInline (returns { id }, calls onSuccess)
@@ -221,6 +220,7 @@ The `sections` prop, `isDrawerOpen` state, `triggerRef`, and the `openDrawer`/`c
 **File**: `src/components/features/applications/ApplicationList/ApplicationList.module.scss`
 
 Change:
+
 - The `.addButton` class currently styles an anchor tag. Update styles as needed to ensure they apply correctly to a `<button>` element (remove any link-specific resets if present, ensure `cursor: pointer` and `border: none` are set).
 
 #### `ApplicationTable`
@@ -246,6 +246,7 @@ This sub-component renders the actual `<table>` element. Changes:
 **File**: `src/components/features/applications/ApplicationList/ApplicationTable/ApplicationTable.module.scss`
 
 Changes:
+
 - Add `.actionsCell` class: `text-align: right; white-space: nowrap; width: 1%;` (the `width: 1%` trick collapses the column to its minimum content width).
 - Add `.editButton` class: minimal button reset styles (`background: none; border: none; cursor: pointer; padding: ...`) plus sufficient color contrast for the "Edit" label text.
 - Add `.deleteButton` class: same button reset styles as `.editButton`, with a red/danger color to indicate destructive action.
@@ -256,6 +257,7 @@ Changes:
 **File**: `src/app/(dashboard)/applications/page.tsx`
 
 Changes:
+
 - Add a second Supabase query to fetch sections after the applications query.
 - Pass `sections` as a prop to `<ApplicationList>`.
 
@@ -264,6 +266,7 @@ Changes:
 **File**: `src/components/ui/EmptyState/EmptyState.tsx`
 
 Change:
+
 - Add optional `onAction?: () => void` prop.
 - When `onAction` is provided, render a `<button>` for the action instead of a `<Link>`. When `actionHref` is provided, continue to render a `<Link>` as today. When both are provided, `onAction` takes precedence.
 - Update the `showAction` logic accordingly.
@@ -273,6 +276,7 @@ Change:
 **File**: `src/services/applications.ts`
 
 Changes:
+
 - `createApplicationInline` is already implemented: inserts a record, calls `revalidatePath(ROUTES.APPLICATIONS)`, returns `{ id: string }`. No changes needed.
 - Add `updateApplicationInline` after the existing `updateApplication` function. It uses the same `extractFormData`, `buildValidationError`, and `applicationUpdateSchema` already in the file. On success it calls `revalidatePath(ROUTES.APPLICATIONS)` and returns `{ id: string }`. It does not call `redirect()` and does not revalidate the detail or edit page routes.
 
@@ -281,122 +285,146 @@ Changes:
 ## Acceptance Criteria
 
 ### AC-1: Drawer Opens on Button Click
+
 - **Given** the user is on the applications list page
 - **When** the user clicks the "Add Application" button in the toolbar
 - **Then** the side drawer slides in from the right, the backdrop appears, and the application creation form is visible inside the drawer
 
 ### AC-2: Drawer Contains the Full Creation Form
+
 - **Given** the drawer is open
 - **When** the user inspects the form
 - **Then** all fields present on the `/applications/new` page are present in the drawer: Company Name, Position Title, Job Posting URL, Location, Work Type, Salary Range (min and max), Date Applied, Status, and Section
 
 ### AC-3: Sections Populated in Drawer Form
+
 - **Given** the user has one or more sections
 - **When** the drawer is open
 - **Then** the Section dropdown contains those sections as options, matching the data shown on the `/applications/new` page
 
 ### AC-4: Successful Submission Closes Drawer and Updates List
+
 - **Given** the drawer is open and the user fills in all required fields
 - **When** the user submits the form
 - **Then** the drawer closes, the applications list updates to include the new record, and no page navigation occurs
 
 ### AC-5: Focus Returns to Trigger Button After Close
+
 - **Given** the drawer was opened via the "Add Application" button
 - **When** the drawer closes (after successful submit or via any dismissal method)
 - **Then** keyboard focus returns to the "Add Application" button
 
 ### AC-6: Validation Errors Keep Drawer Open
+
 - **Given** the drawer is open and the user submits the form with required fields missing
 - **When** the server action returns validation errors
 - **Then** the drawer remains open, inline field errors are displayed, and focus moves to the first invalid field
 
 ### AC-7: Close Button Dismisses Drawer
+
 - **Given** the drawer is open
 - **When** the user clicks the X close button in the drawer header
 - **Then** the drawer closes and the form is discarded (no data is saved)
 
 ### AC-8: Escape Key Dismisses Drawer
+
 - **Given** the drawer is open
 - **When** the user presses the Escape key
 - **Then** the drawer closes and the form is discarded
 
 ### AC-9: Backdrop Click Dismisses Drawer
+
 - **Given** the drawer is open
 - **When** the user clicks on the backdrop area outside the drawer panel
 - **Then** the drawer closes and the form is discarded
 
 ### AC-10: Body Scroll Locked While Drawer Open
+
 - **Given** the applications list is long enough to scroll
 - **When** the drawer is open
 - **Then** the page body does not scroll
 
 ### AC-11: Empty State Action Opens Drawer
+
 - **Given** the user has no applications (empty state is shown)
 - **When** the user clicks the "Add Application" action in the empty state
 - **Then** the side drawer opens — no navigation to `/applications/new` occurs
 
 ### AC-12: Fallback Page Remains Functional
+
 - **Given** the user navigates directly to `/applications/new`
 - **When** the page loads
 - **Then** the standalone application creation form is displayed and submitting it still redirects to the new record's detail page
 
 ### AC-13: Drawer is Accessible
+
 - **Given** the drawer is open
 - **When** a screen reader user interacts with the page
 - **Then** the drawer has `role="dialog"`, `aria-modal="true"`, and its title is referenced by `aria-labelledby`; focus is trapped within the drawer and does not reach the content behind the backdrop
 
 ### AC-14: Drawer is Full Width on Mobile
+
 - **Given** the user is on a viewport 768px wide or narrower
 - **When** the drawer is open
 - **Then** the drawer panel occupies the full viewport width
 
 ### AC-15: Server Error Keeps Drawer Open
+
 - **Given** the drawer is open and the Supabase insert fails
 - **When** the `createApplicationInline` action returns an error
 - **Then** the drawer stays open and an error banner is shown at the top of the form with the message "Something went wrong. Your changes were not saved. Please try again."
 
 ### AC-16: Actions Column Present in Table
+
 - **Given** the user has at least one application
 - **When** the applications list renders
 - **Then** the table includes an "Actions" column as the last column, and each row contains an "Edit" button in that column
 
 ### AC-17: Edit Button Opens Drawer in Edit Mode
+
 - **Given** the user is on the applications list page
 - **When** the user clicks the "Edit" button for a specific row
 - **Then** the side drawer slides open with the title "Edit Application" and the form is pre-filled with that application's current data (company name, position title, URL, location, work type, salary range, date applied, status, and section)
 
 ### AC-18: Edit Mode Drawer Has Correct Title
+
 - **Given** the user opens the drawer via the "Add Application" button
 - **Then** the drawer header reads "Add Application"
 - **Given** the user opens the drawer via an "Edit" button in a row
 - **Then** the drawer header reads "Edit Application"
 
 ### AC-19: Successful Edit Closes Drawer and Updates Row
+
 - **Given** the drawer is open in edit mode with an application's data pre-filled
 - **When** the user changes one or more fields and submits the form
 - **Then** the drawer closes, the applications list revalidates, the edited row reflects the updated values, and no page navigation occurs
 
 ### AC-20: Focus Returns to Edit Button After Drawer Closes
+
 - **Given** the drawer was opened via the "Edit" button in a specific row
 - **When** the drawer closes (after successful save or via any dismissal method)
 - **Then** keyboard focus returns to that row's "Edit" button
 
 ### AC-21: Edit Validation Errors Keep Drawer Open
+
 - **Given** the drawer is open in edit mode and the user clears a required field and submits
 - **When** the `updateApplicationInline` action returns validation errors
 - **Then** the drawer remains open, inline field errors are displayed, and focus moves to the first invalid field
 
 ### AC-22: Edit Server Error Keeps Drawer Open
+
 - **Given** the drawer is open in edit mode and the Supabase update fails
 - **When** the `updateApplicationInline` action returns an error
 - **Then** the drawer stays open and an error banner is shown at the top of the form with the message "Something went wrong. Your changes were not saved. Please try again."
 
 ### AC-23: Edit Fallback Page Remains Functional
+
 - **Given** the user navigates directly to `/applications/[id]/edit`
 - **When** the page loads
 - **Then** the standalone edit form is displayed and submitting it still redirects to the application's detail page
 
 ### AC-24: Edit Drawer Does Not Affect Create Drawer State
+
 - **Given** the user opens the edit drawer for one application, then closes it
 - **When** the user clicks "Add Application"
 - **Then** the drawer opens in create mode with a blank form and the title "Add Application" — no data from the previous edit session is present

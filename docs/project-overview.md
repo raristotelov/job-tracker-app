@@ -50,26 +50,26 @@ This is a single-user application. There is one person — the job seeker — wh
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend Framework | Next.js (App Router) |
-| UI Library | React.js |
-| Language | TypeScript |
-| Styling | SASS Modules |
-| Database | PostgreSQL via Supabase |
-| Auth | Supabase Auth |
-| Hosting | TBD |
+| Layer              | Technology              |
+| ------------------ | ----------------------- |
+| Frontend Framework | Next.js (App Router)    |
+| UI Library         | React.js                |
+| Language           | TypeScript              |
+| Styling            | SASS Modules            |
+| Database           | PostgreSQL via Supabase |
+| Auth               | Supabase Auth           |
+| Hosting            | TBD                     |
 
 ---
 
 ## Core Features (v1)
 
-| Feature | Description | Spec |
-|---|---|---|
-| Job Applications CRUD | Create, view, edit, and delete job application records | [job-applications-crud.md](./features/job-applications-crud.md) |
-| Sections | User-defined groups for organizing applications | [sections.md](./features/sections.md) |
-| Status Tracking | Track each application through five hiring pipeline stages | [status-tracking.md](./features/status-tracking.md) |
-| Notes | Attach timestamped rich-text notes to any application | [notes.md](./features/notes.md) |
+| Feature               | Description                                                | Spec                                                            |
+| --------------------- | ---------------------------------------------------------- | --------------------------------------------------------------- |
+| Job Applications CRUD | Create, view, edit, and delete job application records     | [job-applications-crud.md](./features/job-applications-crud.md) |
+| Sections              | User-defined groups for organizing applications            | [sections.md](./features/sections.md)                           |
+| Status Tracking       | Track each application through five hiring pipeline stages | [status-tracking.md](./features/status-tracking.md)             |
+| Notes                 | Attach timestamped rich-text notes to any application      | [notes.md](./features/notes.md)                                 |
 
 ---
 

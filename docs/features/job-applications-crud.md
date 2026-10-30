@@ -58,34 +58,29 @@ When actively job searching, applications pile up quickly. The user needs one pl
 
 **`applications` table:**
 
-| Column | Type | Required | Notes |
-|---|---|---|---|
-| `id` | `uuid` | Yes | Primary key, auto-generated |
-| `user_id` | `uuid` | Yes | FK to `auth.users`, set from the authenticated session |
-| `section_id` | `uuid` | No | FK to `sections.id`, nullable. Null means unsectioned. Set to null on section delete (no cascade delete of applications). |
-| `company_name` | `text` | Yes | Max 200 characters |
-| `position_title` | `text` | Yes | Max 200 characters |
-| `job_posting_url` | `text` | No | Must be a valid URL if provided. Max 2000 characters |
-| `location` | `text` | No | Free text, e.g. "Austin, TX" or "Remote". Max 200 characters |
-| `work_type` | `text` | No | Enum: `remote`, `hybrid`, `on_site` |
-| `salary_range_min` | `integer` | No | In USD. Must be >= 0 if provided |
-| `salary_range_max` | `integer` | No | In USD. Must be >= `salary_range_min` if both are provided |
-| `status` | `text` | Yes | See Status Tracking spec. Defaults to `applied` on creation |
-| `date_applied` | `date` | Yes | Cannot be a future date |
-| `created_at` | `timestamptz` | Yes | Auto-set on insert |
-| `updated_at` | `timestamptz` | Yes | Auto-set on insert and update via DB trigger |
+| Column             | Type          | Required | Notes                                                                                                                     |
+| ------------------ | ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `id`               | `uuid`        | Yes      | Primary key, auto-generated                                                                                               |
+| `user_id`          | `uuid`        | Yes      | FK to `auth.users`, set from the authenticated session                                                                    |
+| `section_id`       | `uuid`        | No       | FK to `sections.id`, nullable. Null means unsectioned. Set to null on section delete (no cascade delete of applications). |
+| `company_name`     | `text`        | Yes      | Max 200 characters                                                                                                        |
+| `position_title`   | `text`        | Yes      | Max 200 characters                                                                                                        |
+| `job_posting_url`  | `text`        | No       | Must be a valid URL if provided. Max 2000 characters                                                                      |
+| `location`         | `text`        | No       | Free text, e.g. "Austin, TX" or "Remote". Max 200 characters                                                              |
+| `work_type`        | `text`        | No       | Enum: `remote`, `hybrid`, `on_site`                                                                                       |
+| `salary_range_min` | `integer`     | No       | In USD. Must be >= 0 if provided                                                                                          |
+| `salary_range_max` | `integer`     | No       | In USD. Must be >= `salary_range_min` if both are provided                                                                |
+| `status`           | `text`        | Yes      | See Status Tracking spec. Defaults to `applied` on creation                                                               |
+| `date_applied`     | `date`        | Yes      | Cannot be a future date                                                                                                   |
+| `created_at`       | `timestamptz` | Yes      | Auto-set on insert                                                                                                        |
+| `updated_at`       | `timestamptz` | Yes      | Auto-set on insert and update via DB trigger                                                                              |
 
 **TypeScript types:**
 
 ```typescript
-type WorkType = 'remote' | 'hybrid' | 'on_site';
+type WorkType = "remote" | "hybrid" | "on_site";
 
-type ApplicationStatus =
-  | 'applied'
-  | 'interview_scheduled'
-  | 'interview_completed'
-  | 'offer_received'
-  | 'rejected';
+type ApplicationStatus = "applied" | "interview_scheduled" | "interview_completed" | "offer_received" | "rejected";
 
 interface Application {
   id: string;
@@ -125,6 +120,7 @@ All data operations use the Supabase JS client from Server Components or Server 
 - **Delete**: `supabase.from('applications').delete().eq('id', id)`
 
 RLS policy:
+
 ```sql
 CREATE POLICY "Users manage own applications"
 ON applications FOR ALL
@@ -137,96 +133,115 @@ WITH CHECK (auth.uid() = user_id);
 ## Acceptance Criteria
 
 ### AC-1: Create — Happy Path
+
 - **Given** the user is on the "Add Application" form
 - **When** the user fills in all required fields (company name, position title, date applied) with valid data and submits
 - **Then** a new application record is created in the database, the user is redirected to the detail view for the new record, and all submitted field values are displayed correctly
 
 ### AC-2: Create — Section Is Optional
+
 - **Given** the user is on the "Add Application" form
 - **When** the user submits the form without selecting a section
 - **Then** the application is created with `section_id` set to null and appears under "Unsectioned" in the By Section view
 
 ### AC-3: Create — Section Assignment
+
 - **Given** the user has at least one section and is on the "Add Application" form
 - **When** the user selects a section from the section dropdown and submits the form
 - **Then** the application is created with the correct `section_id` and appears under that section in the By Section view
 
 ### AC-4: Create — Required Field Validation
+
 - **Given** the user is on the "Add Application" form
 - **When** the user submits the form with one or more required fields left empty
 - **Then** the form is not submitted, inline error messages appear beneath each missing required field, and focus moves to the first invalid field
 
 ### AC-5: Create — URL Validation
+
 - **Given** the user enters a value in the Job Posting URL field that is not a valid URL
 - **When** the user submits the form
 - **Then** the form is not submitted and the URL field shows the error "Please enter a valid URL"
 
 ### AC-6: Create — Salary Range Validation
+
 - **Given** the user enters a minimum salary greater than the maximum salary
 - **When** the user submits the form
 - **Then** the form is not submitted and the maximum salary field shows "Maximum must be greater than or equal to minimum"
 
 ### AC-7: Create — Future Date Validation
+
 - **Given** the user enters a date applied that is in the future
 - **When** the user submits the form
 - **Then** the form is not submitted and the date field shows "Date applied cannot be in the future"
 
 ### AC-8: Create — Default Status
+
 - **Given** the user submits the form without selecting a status
 - **When** the record is created
 - **Then** the `status` field is set to `applied`
 
 ### AC-9: List — All View Shows All Applications
+
 - **Given** the user has one or more application records
 - **When** the user visits the applications list in "All" mode
 - **Then** all applications appear in a table sorted by Date Applied descending with columns: Section, Company Name, Position Title, Location, Status, Date Applied
 
 ### AC-10: List — Empty State
+
 - **Given** the user has no application records
 - **When** the user visits the applications list
 - **Then** an empty state message is shown with a prompt to add their first application
 
 ### AC-11: List — By Section Grouping
+
 - **Given** the user has applications assigned to different sections and some with no section
 - **When** the user switches to "By Section" mode
 - **Then** applications are grouped under their respective section headings, each heading shows the count, and unsectioned applications appear under an "Unsectioned" group at the bottom
 
 ### AC-12: List — Unsectioned Group Hidden When Empty
+
 - **Given** all of the user's applications are assigned to a section (none are unsectioned)
 - **When** the user views the By Section layout
 - **Then** no "Unsectioned" group appears
 
 ### AC-13: Detail View — Shows All Fields
+
 - **Given** an application exists with data in multiple fields
 - **When** the user opens its detail view
 - **Then** all populated fields are displayed and optional fields with no value show a neutral placeholder such as "—"
 
 ### AC-14: Edit — Happy Path
+
 - **Given** the user is on the detail view for an application
 - **When** the user clicks "Edit", updates one or more fields, and clicks "Save"
 - **Then** the record is updated in the database, the user is returned to the detail view showing the new values, and a brief success message is displayed
 
 ### AC-15: Edit — Cancel Discards Changes
+
 - **Given** the user has made changes on the edit form that have not been saved
 - **When** the user clicks "Cancel"
 - **Then** no changes are written to the database and the user is returned to the detail view showing the original values
 
 ### AC-16: Edit — Reassign Section
+
 - **Given** the user is editing an application currently assigned to Section A
 - **When** the user changes the section to Section B and saves
 - **Then** the application's `section_id` is updated to Section B's ID and it appears under Section B in the By Section view
 
 ### AC-17: Delete — Confirmation Required
+
 - **Given** the user is on the detail view for an application
 - **When** the user clicks "Delete"
 - **Then** a confirmation dialog appears with the message "Are you sure you want to delete your application to [Company Name] for [Position Title]? This cannot be undone."
 
 ### AC-18: Delete — Confirmed
+
 - **Given** the delete confirmation dialog is open
 - **When** the user confirms the deletion
 - **Then** the application record is permanently deleted and the user is redirected to the applications list
 
 ### AC-19: Delete — Cancelled
+
 - **Given** the delete confirmation dialog is open
 - **When** the user clicks "Cancel"
 - **Then** no data is deleted and the dialog closes, returning the user to the detail view

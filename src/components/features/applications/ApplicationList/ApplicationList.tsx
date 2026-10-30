@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { ApplicationDrawer } from '@/components/features/applications/ApplicationDrawer';
-import { ApplicationDetailModal } from '@/components/features/applications/ApplicationDetailModal';
-import { deleteApplication } from '@/services/applications';
-import type { ApplicationWithSection, Section, ApplicationStatus } from '@/types';
-import { ViewToggle, type ViewMode } from './ViewToggle';
-import { ApplicationTable } from './ApplicationTable';
-import styles from './ApplicationList.module.scss';
+import { useState, useRef } from "react";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ApplicationDrawer } from "@/components/features/applications/ApplicationDrawer";
+import { ApplicationDetailModal } from "@/components/features/applications/ApplicationDetailModal";
+import { deleteApplication } from "@/services/applications";
+import type { ApplicationWithSection, Section, ApplicationStatus } from "@/types";
+import { ViewToggle, type ViewMode } from "./ViewToggle";
+import { ApplicationTable } from "./ApplicationTable";
+import styles from "./ApplicationList.module.scss";
 
 interface ApplicationListProps {
   applications: ApplicationWithSection[];
@@ -25,7 +25,7 @@ interface ApplicationListProps {
  * through to avoid a redundant client-side fetch.
  */
 export function ApplicationList({ applications, sections }: ApplicationListProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>('all');
+  const [viewMode, setViewMode] = useState<ViewMode>("all");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<ApplicationWithSection | null>(null);
   const [selectedApplication, setSelectedApplication] = useState<ApplicationWithSection | null>(null);
@@ -70,19 +70,15 @@ export function ApplicationList({ applications, sections }: ApplicationListProps
   };
 
   const handleStatusChange = (newStatus: ApplicationStatus) => {
-    setSelectedApplication((prev) =>
-      prev ? { ...prev, status: newStatus } : null,
-    );
+    setSelectedApplication((prev) => (prev ? { ...prev, status: newStatus } : null));
   };
 
   const handleDelete = async (app: ApplicationWithSection) => {
-    const confirmed = window.confirm(
-      `Delete "${app.position_title}" at ${app.company_name}? This cannot be undone.`,
-    );
+    const confirmed = window.confirm(`Delete "${app.position_title}" at ${app.company_name}? This cannot be undone.`);
     if (!confirmed) return;
 
     const result = await deleteApplication(app.id);
-    if ('error' in result) {
+    if ("error" in result) {
       alert(result.error);
     }
     // On success, revalidatePath in the server action triggers a re-render automatically.
@@ -92,24 +88,14 @@ export function ApplicationList({ applications, sections }: ApplicationListProps
     <div className={styles.container}>
       <div className={styles.toolbar}>
         <ViewToggle value={viewMode} onChange={setViewMode} />
-        <button
-          ref={triggerRef}
-          type="button"
-          className={styles.addButton}
-          onClick={openDrawer}
-          disabled={isDrawerOpen}
-        >
+        <button ref={triggerRef} type="button" className={styles.addButton} onClick={openDrawer} disabled={isDrawerOpen}>
           Add Application
         </button>
       </div>
 
       {applications.length === 0 ? (
-        <EmptyState
-          message="No applications yet. Add your first one to get started."
-          actionLabel="Add Application"
-          onAction={openDrawer}
-        />
-      ) : viewMode === 'all' ? (
+        <EmptyState message="No applications yet. Add your first one to get started." actionLabel="Add Application" onAction={openDrawer} />
+      ) : viewMode === "all" ? (
         <ApplicationTable
           applications={applications}
           sections={sections}
@@ -127,19 +113,9 @@ export function ApplicationList({ applications, sections }: ApplicationListProps
         />
       )}
 
-      <ApplicationDrawer
-        isOpen={isDrawerOpen}
-        onClose={closeDrawer}
-        sections={sections}
-        editTarget={editTarget ?? undefined}
-      />
+      <ApplicationDrawer isOpen={isDrawerOpen} onClose={closeDrawer} sections={sections} editTarget={editTarget ?? undefined} />
 
-      <ApplicationDetailModal
-        application={selectedApplication}
-        isOpen={isDetailOpen}
-        onClose={closeDetail}
-        onStatusChange={handleStatusChange}
-      />
+      <ApplicationDetailModal application={selectedApplication} isOpen={isDetailOpen} onClose={closeDetail} onStatusChange={handleStatusChange} />
     </div>
   );
 }
@@ -167,7 +143,7 @@ function BySectionView({ applications, sections, onEditClick, onDeleteClick, onR
   const groups = new Map<string, ApplicationWithSection[]>();
 
   for (const app of applications) {
-    const key = app.sections?.name ?? '__unsectioned__';
+    const key = app.sections?.name ?? "__unsectioned__";
     if (!groups.has(key)) {
       groups.set(key, []);
     }
@@ -175,14 +151,14 @@ function BySectionView({ applications, sections, onEditClick, onDeleteClick, onR
   }
 
   // Alpha-sort named sections; unsectioned always goes last.
-  const unsectionedApps = groups.get('__unsectioned__') ?? [];
+  const unsectionedApps = groups.get("__unsectioned__") ?? [];
   const namedGroups = Array.from(groups.entries())
-    .filter(([key]) => key !== '__unsectioned__')
+    .filter(([key]) => key !== "__unsectioned__")
     .sort(([a], [b]) => a.localeCompare(b));
 
   const orderedGroups: Array<{ name: string; apps: ApplicationWithSection[] }> = [
     ...namedGroups.map(([name, apps]) => ({ name, apps })),
-    ...(unsectionedApps.length > 0 ? [{ name: 'Unsectioned', apps: unsectionedApps }] : []),
+    ...(unsectionedApps.length > 0 ? [{ name: "Unsectioned", apps: unsectionedApps }] : []),
   ];
 
   return (
@@ -193,13 +169,7 @@ function BySectionView({ applications, sections, onEditClick, onDeleteClick, onR
             {name}
             <span className={styles.sectionCount}>{apps.length}</span>
           </h2>
-          <ApplicationTable
-            applications={apps}
-            sections={sections}
-            onEditClick={onEditClick}
-            onDeleteClick={onDeleteClick}
-            onRowClick={onRowClick}
-          />
+          <ApplicationTable applications={apps} sections={sections} onEditClick={onEditClick} onDeleteClick={onDeleteClick} onRowClick={onRowClick} />
         </section>
       ))}
     </div>

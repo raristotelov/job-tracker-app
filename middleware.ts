@@ -1,6 +1,6 @@
-import { NextResponse, type NextRequest } from 'next/server';
-import { createClient } from '@/lib/supabase/middleware';
-import { ROUTES } from '@/constants/routes';
+import { NextResponse, type NextRequest } from "next/server";
+import { createClient } from "@/lib/supabase/middleware";
+import { ROUTES } from "@/constants/routes";
 
 /** Paths that are accessible without an authenticated session. */
 const PUBLIC_PATHS = [ROUTES.LOGIN, ROUTES.SIGNUP] as const;
@@ -40,7 +40,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
 };

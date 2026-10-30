@@ -1,5 +1,5 @@
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as *;
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
 
 // =============================================================================
 // OVERLAY — full-viewport container rendered via portal
@@ -67,7 +67,7 @@
     transition: none;
   }
 
-  @include respond-to('tablet') {
+  @include respond-to("tablet") {
     width: 100vw;
   }
 }
@@ -105,7 +105,9 @@
   border: none;
   border-radius: $radius-sm;
   cursor: pointer;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
 
   &:hover {
     color: $color-text-dark;

@@ -1,1 +1,1 @@
-export { SuccessMessage } from './SuccessMessage';
+export { SuccessMessage } from "./SuccessMessage";

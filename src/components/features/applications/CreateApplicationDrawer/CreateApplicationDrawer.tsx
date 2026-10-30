@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { SideDrawer } from '@/components/ui/SideDrawer';
-import { ApplicationForm } from '@/components/features/applications/ApplicationForm';
-import type { Section } from '@/types';
-import styles from './CreateApplicationDrawer.module.scss';
+import { SideDrawer } from "@/components/ui/SideDrawer";
+import { ApplicationForm } from "@/components/features/applications/ApplicationForm";
+import type { Section } from "@/types";
+import styles from "./CreateApplicationDrawer.module.scss";
 
 // =============================================================================
 // TYPES
@@ -28,19 +28,11 @@ interface CreateApplicationDrawerProps {
  * - Sections are passed through from the parent Server Component — no
  *   additional client-side fetch is needed.
  */
-export function CreateApplicationDrawer({
-  isOpen,
-  onClose,
-  sections,
-}: CreateApplicationDrawerProps) {
+export function CreateApplicationDrawer({ isOpen, onClose, sections }: CreateApplicationDrawerProps) {
   return (
     <SideDrawer isOpen={isOpen} onClose={onClose} title="Add Application">
       <div className={styles.formWrapper}>
-        <ApplicationForm
-          sections={sections}
-          onSuccess={onClose}
-          onCancel={onClose}
-        />
+        <ApplicationForm sections={sections} onSuccess={onClose} onCancel={onClose} />
       </div>
     </SideDrawer>
   );
